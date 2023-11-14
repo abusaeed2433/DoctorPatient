@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/dim_stroke_only"
+    android:layout_margin="16dp"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/tv_pat_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="serif"
+        android:gravity="center_horizontal"
+        android:textColor="@color/text_color"
+        android:textSize="18sp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Someone is calling.." />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:gravity="center_vertical"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/light_blue_dark_color"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_pat_info"
+        tools:text="@string/disease_description" />
+
+    <TextView
+        android:id="@+id/tv_pat_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/just_stroke_only"
+        android:gravity="center_vertical"
+        android:minHeight="40dp"
+        android:padding="8dp"
+        android:textColor="@color/text_color"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        tools:text="@string/disease_description" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_control"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/dim_back"
+        android:elevation="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_pat_desc">
+
+        <ImageView
+            android:id="@+id/iv_reject"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:contentDescription="@string/call_end"
+            android:onClick="onCallEndClicked"
+            android:padding="4dp"
+            android:src="@drawable/ic_baseline_call_end_24"
+            android:text="@string/join"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@+id/iv_accept"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent=".12" />
+
+        <ImageView
+            android:id="@+id/iv_accept"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:contentDescription="@string/mic"
+            android:onClick="onMicClicked"
+            android:padding="4dp"
+            android:src="@drawable/ic_baseline_add_ic_call_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/iv_reject"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent=".12" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

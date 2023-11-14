@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="editTextStyle2" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <!--        <item name="hintTextColor">@color/hintColor</item>-->
+        <item name="boxBackgroundColor">@android:color/transparent</item>
+        <item name="boxStrokeColor">@color/mtrl_textinput_default_box_stroke_color</item>
+        <item name="boxStrokeWidth">2dp</item>
+    </style>
+
+    <style name="editTextOutlineStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintTextColor">@color/dim_black_dim_white</item>
+        <item name="boxBackgroundColor">@android:color/transparent</item>
+    </style>
+
+    <style name="fullScreenActivity" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_image</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
+</resources>
