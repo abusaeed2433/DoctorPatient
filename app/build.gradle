@@ -16,16 +16,29 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {
-            abiFilters 'arm64-v8a', 'x86_64'
+            //noinspection ChromeOsAbiSupport
+            abiFilters 'arm64-v8a'//, 'x86_64'
         }
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+//    splits {
+//        abi {
+//            enable true // Enable ABI splitting
+//            reset()
+//            //noinspection ChromeOsAbiSupport
+//            include 'armeabi-v7a', 'arm64-v8a' // Include only necessary architectures
+//            universalApk false // Do not generate a universal APK
+//        }
+//    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -46,7 +59,15 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 
     //agora
-    implementation 'io.agora.rtc:full-sdk:4.0.1'
+    implementation('io.agora.rtc:full-sdk:4.5.0'){
+        exclude group: 'io.agora.rtc', module: 'libagora_ai_denoise_extension.so'
+        exclude group: 'io.agora.rtc', module: 'libagora_dav1d_extension.so'
+        exclude group: 'io.agora.rtc', module: 'libagora_jnd_extension.so'
+        exclude group: 'io.agora.rtc', module: 'libagora_segmentation_extension.so'
+        exclude group: 'io.agora.rtc', module: 'libagora_fd_extension.so'
+        exclude group: 'io.agora.rtc', module: 'libagora_super_resolution_extension.so'
+        exclude group: 'io.agora.rtc', module: 'libagora_video_process_extension.so'
+    }
     //implementation 'io.agora.rtc:full-rtc-basic:3.7.0.3'
 
     //glide
