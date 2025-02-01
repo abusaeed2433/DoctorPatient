@@ -96,6 +96,13 @@ public class HomePage extends AppCompatActivity implements SnapListener {
             showInTv(getString(R.string.getting_active_doc_list_dot));
             downloadOnline();
         }
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user != null) {
+            boolean isEmailVerified = user.isEmailVerified();
+            showSafeToast( "Verified: "+isEmailVerified );
+        }
+
     }
 
     private void retrieveBasicInfo(){
