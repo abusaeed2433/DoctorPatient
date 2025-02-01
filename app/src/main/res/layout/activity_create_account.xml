@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".CreateAccount"
-    android:id="@+id/rl_sign_in">
+    android:id="@+id/rlRoot">
 
     <ProgressBar
         android:visibility="gone"
@@ -22,30 +22,51 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/pb_sign_in"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
         android:padding="8dp"
         android:fontFamily="serif-monospace"
         android:layout_gravity="center"
         android:textAllCaps="true"
+        android:textStyle="bold"
         android:textColor="@color/black"
         android:textSize="20sp"
-        tools:text="Message"/>
+        android:text="@string/select_your_profession"/>
 
-    <TextView
-        android:id="@+id/tv_selected"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal"
         android:layout_centerHorizontal="true"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:layout_marginBottom="8dp"
-        android:background="@color/very_dim_white"
-        android:layout_above="@id/cl_tmp"
-        android:padding="8dp"
-        android:fontFamily="sans-serif-condensed-medium"
-        android:layout_gravity="center"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:text="@string/you_are_a"/>
+        android:layout_above="@id/cl_tmp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="4dp"
+            android:background="@color/very_dim_white"
+            android:padding="8dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:text="@string/you_are_a"/>
+
+        <TextView
+            android:id="@+id/tv_selected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/yellow"
+            android:padding="8dp"
+            android:visibility="invisible"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            tools:text="@string/patient"/>
+
+    </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_tmp"
@@ -67,7 +88,7 @@
 
             app:layout_constraintStart_toEndOf="@+id/rl_p"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent=".4">
+            app:layout_constraintWidth_percent=".3">
 
             <ImageView
                 android:id="@+id/iv_doctor"
@@ -103,7 +124,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent=".4">
+            app:layout_constraintWidth_percent=".3">
 
             <ImageView
                 android:id="@+id/iv_patient"
@@ -121,6 +142,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:text="@string/patient"
+                android:fontFamily="@font/roboto_slab"
                 android:textColor="@color/text_color"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -129,19 +151,38 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <android.widget.Button
-        android:id="@+id/button_sign_in"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:id="@+id/llSignIn"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/soft_blue"
-        android:text="@string/sign_in_with_google"
-        android:textColor="@color/white"
-        android:textSize="20sp" />
+        android:background="@drawable/button_ripple">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:contentDescription="@string/google_icon"
+            android:src="@drawable/google"/>
+
+        <TextView
+            android:id="@+id/button_sign_in"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:background="@android:color/transparent"
+            android:text="@string/sign_in_with_google"
+            android:layout_gravity="center_vertical"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textColor="@color/text_color"
+            android:textSize="20sp" />
+
+    </LinearLayout>
 
 </RelativeLayout>

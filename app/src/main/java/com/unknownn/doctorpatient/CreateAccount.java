@@ -6,10 +6,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -35,6 +31,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.unknownn.doctorpatient.databinding.ActivityCreateAccountBinding;
+import com.unknownn.doctorpatient.others.MyPopUp;
 import com.unknownn.doctorpatient.others.SharedPref;
 
 import java.util.HashMap;
@@ -45,12 +43,12 @@ public class CreateAccount extends AppCompatActivity {
     private static final int PERMISSION_REQ_ID = 22;
     private static final String[] REQUESTED_PERMISSIONS = { Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA };
 
-    private RelativeLayout rlSignIn, rlDoctor, rlPatient;
-    private ProgressBar pbSignIn;
-    private Button buttonSignIn;
-    private TextView tvSignInMessage;
-
-    private TextView tvSelected;
+//    private RelativeLayout rlSignIn, rlDoctor, rlPatient;
+//    private ProgressBar pbSignIn;
+//    private Button buttonSignIn;
+//    private TextView tvSignInMessage;
+//
+//    private TextView tvSelected;
 
     private GoogleSignInClient client;
     private ActivityResultLauncher<Intent> mGetContent;
@@ -59,19 +57,21 @@ public class CreateAccount extends AppCompatActivity {
     private SharedPref sp = null;
     private Boolean isDoctor = null;
 
+    private ActivityCreateAccountBinding binding = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_account);
+        binding = ActivityCreateAccountBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        tvSignInMessage = findViewById(R.id.tv_sign_in_message);
-        rlSignIn = findViewById(R.id.rl_sign_in);
-        pbSignIn = findViewById(R.id.pb_sign_in);
-        buttonSignIn = findViewById(R.id.button_sign_in);
-        tvSelected = findViewById(R.id.tv_selected);
-        rlDoctor = findViewById(R.id.rl_d);
-        rlPatient = findViewById(R.id.rl_p);
+//        tvSignInMessage = findViewById(R.id.tv_sign_in_message);
+//        rlSignIn = findViewById(R.id.rl_sign_in);
+//        pbSignIn = findViewById(R.id.pb_sign_in);
+//        buttonSignIn = findViewById(R.id.button_sign_in);
+//        tvSelected = findViewById(R.id.tv_selected);
+//        rlDoctor = findViewById(R.id.rl_d);
+//        rlPatient = findViewById(R.id.rl_p);
 
         forceExit = getIntent().getBooleanExtra("force_exit",false);
 
@@ -86,23 +86,22 @@ public class CreateAccount extends AppCompatActivity {
     }
 
     private void showSnackBar(String message){
-        Snackbar snackbar = Snackbar.make(rlSignIn,message,Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(binding.rlRoot,message,Snackbar.LENGTH_LONG);
         snackbar.show();
     }
 
     private void setClickListener(){
-        rlPatient.setOnClickListener(v -> setClicked(false));
-        rlDoctor.setOnClickListener(v -> setClicked(true));
-        buttonSignIn.setOnClickListener(v -> signInUser());
+        binding.rlP.setOnClickListener(v -> setClicked(false));
+        binding.rlD.setOnClickListener(v -> setClicked(true));
+        binding.llSignIn.setOnClickListener(v -> signInUser());
     }
 
     private void setClicked(boolean amIDoctor){
-        String text = getString(R.string.you_are_a);
+        String text = amIDoctor ? "Doctor" : "Patient";
 
-        if(amIDoctor) text += " doctor";
-        else text += " patient";
-
-        tvSelected.setText(text);
+        binding.tvSelected.setText(text);
+        binding.tvSelected.setVisibility(View.VISIBLE);
+        showMessageInTV("Sign in to continue");
 
         isDoctor = amIDoctor;
     }
@@ -120,14 +119,20 @@ public class CreateAccount extends AppCompatActivity {
                     connectToFirebase(account);
                 }
                 catch (ApiException e) {
-                    showSnackBar("Retry again later");
-                    tvSignInMessage.setText(e.getMessage());
+                    showAlertDialog("Error occurred", getString(R.string.something_went_wrong));
+                    //binding.tvSignInMessage.setText(e.getMessage());
                 }
             }
         });
 
     }
 
+    private void showAlertDialog(String title, String message) {
+        MyPopUp myPopUp = new MyPopUp(this, title, message);
+        myPopUp.setCancelable(false);
+        myPopUp.setClickListener("Dismiss",null);
+        myPopUp.show();
+    }
 
     private void connectToFirebase(GoogleSignInAccount acct) {
         showMessageInTV("Connecting to database...");
@@ -144,20 +149,20 @@ public class CreateAccount extends AppCompatActivity {
                     else {
                         showOrHide(false);
                         showMessageInTV(null);
-                        showSnackBar("Error. Try again later");
+                        showAlertDialog("Error occurred", "Something went wrong. Try again later");
                     }
                 });
     }
 
     private void showOrHide(boolean show){
-        pbSignIn.setVisibility(show ? View.VISIBLE : View.GONE);
+        binding.pbSignIn.setVisibility(show ? View.VISIBLE : View.GONE);
         isProgressShowing = show;
     }
 
     private void addInfoIfNeeded(){
         if(mAuth==null){
             showOrHide(false);
-            showSnackBar("Something went wrong. Retry later");
+            showAlertDialog("Error occurred","Something went wrong. Retry later");
             showMessageInTV(null);
             return;
         }
@@ -166,7 +171,7 @@ public class CreateAccount extends AppCompatActivity {
         if(user == null){
             showOrHide(false);
             showMessageInTV(null);
-            showSnackBar("Failed to generate id. Retry later");
+            showAlertDialog("Error occurred","Failed to generate id. Retry later");
             return;
         }
 
@@ -208,7 +213,9 @@ public class CreateAccount extends AppCompatActivity {
                         else{
                             showOrHide(false);
                             showMessageInTV(null);
-                            showSnackBar("Something went wrong. Retry later");
+                            Exception exception = task.getException();
+                            String message = (exception == null) ? "Something went wrong" : exception.getMessage();
+                            showAlertDialog("Error occurred",message);
                         }
                     });
                 }
@@ -217,7 +224,7 @@ public class CreateAccount extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 showOrHide(false);
-                showSnackBar(error.getMessage());
+                showAlertDialog("Error occurred",error.getMessage());
             }
         });
 
@@ -225,7 +232,7 @@ public class CreateAccount extends AppCompatActivity {
 
     private void completeAndBack(Boolean isDoctor, int id, boolean wasInfoAdded){
         if(isDoctor == null){
-            showSnackBar(getString(R.string.something_went_wrong));
+            showAlertDialog("Error occurred",getString(R.string.something_went_wrong));
             return;
         }
 
@@ -276,14 +283,14 @@ public class CreateAccount extends AppCompatActivity {
 
         Intent intent = client.getSignInIntent();
 
-        showMessageInTV("Please wait...");
+        //showMessageInTV("Please wait...");
         mGetContent.launch(intent);
     }
 
     private void showMessageInTV(String message){
         try{
-            if(message==null) tvSignInMessage.setText(getString(R.string.something_went_wrong));
-            else tvSignInMessage.setText(message);
+            if(message==null) binding.tvSignInMessage.setText(getString(R.string.something_went_wrong));
+            else binding.tvSignInMessage.setText(message);
         }catch (Exception ignored){}
     }
 
@@ -306,7 +313,7 @@ public class CreateAccount extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if(isProgressShowing){
-            showSnackBar("Please wait. Login in progress...");
+            showSafeToast("Please wait. Login in progress...");
             return;
         }
         if(forceExit){

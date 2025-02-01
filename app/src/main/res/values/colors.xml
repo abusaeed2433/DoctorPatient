@@ -108,4 +108,12 @@
     <color name="very_dim_white">#f4f4f4</color>
     <color name="light_dark_photo">#141414</color>
 
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorBlack">#000000</color>
+    <color name="dateBackground">#535353</color>
+    <color name="dark_green_gray">#044304</color>
+    <color name="background_color">#f5ffff</color>
+    <color name="very_light_blue_little_dark">#E9F8FF</color>
+    <color name="redish">#EC8517</color>
+
 </resources>

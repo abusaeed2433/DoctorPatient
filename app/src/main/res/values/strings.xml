@@ -8,7 +8,7 @@
     <string name="sign_in">Sign in</string>
     <string name="sign_in_with_google">Sign in with google</string>
     <string name="something_went_wrong">Something went wrong</string>
-    <string name="doctor">doctor</string>
+    <string name="doctor">Doctor</string>
     <string name="you_are_a">You are a</string>
     <string name="patient">Patient</string>
     <string name="video_call">video call</string>
@@ -44,4 +44,12 @@
     <string name="_0">0</string>
     <string name="profile">profile</string>
     <string name="close">close</string>
+    <string name="welcome_user">Welcome user</string>
+    <string name="google_icon">Google icon</string>
+    <string name="select_your_profession">Select your profession</string>
+    <string name="it_s_your_only">It\'s your only</string>
+    <string name="got_it">Got it</string>
+    <string name="extra_info">Extra info</string>
+    <string name="successful">Successful</string>
+    <string name="info_icon">Info icon</string>
 </resources>
