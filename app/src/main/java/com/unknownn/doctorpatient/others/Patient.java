@@ -6,15 +6,58 @@ import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 
+import com.google.firebase.database.PropertyName;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class Patient {
-    private String uid, name;
-    private final String age, weight, gender, heightFt, heightIn, desc;
+    @PropertyName("uid")
+    private String uid;
 
-    public Patient(String uid,String name, String age, String weight, String gender, String heightFt, String heightIn, String desc) {
+    @PropertyName("int_id")
+    private int intId;
+
+    @PropertyName("name")
+    private String name;
+
+    @PropertyName("age")
+    private String age;
+
+    @PropertyName("weight")
+    private String weight;
+
+    @PropertyName("gender")
+    private String gender;
+
+    @PropertyName("height_ft")
+    private String heightFt;
+
+    @PropertyName("height_in")
+    private String heightIn;
+
+    @PropertyName("disease_desc")
+    private String desc;
+
+    @PropertyName("image_url")
+    private String imageUrl;
+
+    public Patient() {
+        this.uid = "";
+        this.intId = -1;
+        this.name = "";
+        this.age = "";
+        this.weight = "";
+        this.gender = "";
+        this.heightFt = "";
+        this.heightIn = "";
+        this.desc = "";
+        this.imageUrl = "";
+    }
+
+    public Patient(String uid, int intId, String name, String age, String weight, String gender, String heightFt, String heightIn, String desc, String imageUrl) {
         this.uid = uid;
+        this.intId = intId;
         this.name = name;
         this.age = age;
         this.weight = weight;
@@ -22,6 +65,47 @@ public class Patient {
         this.heightFt = heightFt;
         this.heightIn = heightIn;
         this.desc = desc;
+        this.imageUrl = imageUrl;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
+    }
+
+    public void setWeight(String weight) {
+        this.weight = weight;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setHeightFt(String heightFt) {
+        this.heightFt = heightFt;
+    }
+
+    public void setHeightIn(String heightIn) {
+        this.heightIn = heightIn;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public int getIntId() {
+        return intId;
+    }
+
+    public void setIntId(int intId) {
+        this.intId = intId;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
     }
 
     public void setUid(String uid) {
@@ -33,7 +117,7 @@ public class Patient {
     }
 
     public Map<String, Object> getSavableMap(){
-        Map<String, Object> map = new HashMap<>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("name",name);
         map.put("age",age);
         map.put("weight",weight);

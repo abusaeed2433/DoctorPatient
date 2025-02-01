@@ -1,11 +1,13 @@
 package com.unknownn.doctorpatient;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -35,9 +37,6 @@ import com.unknownn.doctorpatient.databinding.ActivityCreateAccountBinding;
 import com.unknownn.doctorpatient.others.MyPopUp;
 import com.unknownn.doctorpatient.others.SharedPref;
 
-import java.util.HashMap;
-import java.util.Random;
-
 public class CreateAccount extends AppCompatActivity {
 
     private static final int PERMISSION_REQ_ID = 22;
@@ -56,6 +55,7 @@ public class CreateAccount extends AppCompatActivity {
     private boolean isProgressShowing = false, forceExit = false;
     private SharedPref sp = null;
     private Boolean isDoctor = null;
+    private Dialog mainDialog = null;
 
     private ActivityCreateAccountBinding binding = null;
 
@@ -135,16 +135,16 @@ public class CreateAccount extends AppCompatActivity {
     }
 
     private void connectToFirebase(GoogleSignInAccount acct) {
-        showMessageInTV("Connecting to database...");
-        showOrHide(true);
+        showProgress();
 
         mAuth = FirebaseAuth.getInstance();
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
 
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
+                    dismissMainDialog();
                     if (task.isSuccessful()) {
-                        addInfoIfNeeded();
+                        checkUserExistence();
                     }
                     else {
                         showOrHide(false);
@@ -159,8 +159,8 @@ public class CreateAccount extends AppCompatActivity {
         isProgressShowing = show;
     }
 
-    private void addInfoIfNeeded(){
-        if(mAuth==null){
+    private void checkUserExistence(){
+        if(mAuth == null){
             showOrHide(false);
             showAlertDialog("Error occurred","Something went wrong. Retry later");
             showMessageInTV(null);
@@ -175,49 +175,19 @@ public class CreateAccount extends AppCompatActivity {
             return;
         }
 
-        String name, uid;
-        uid = user.getUid();
-        name = user.getDisplayName();
+        final String uid = user.getUid();
+        final String name = user.getDisplayName();
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()){
-                    Boolean isDoctor = null;
-                    int id = 0;
-                    try{
-                        String doctor = String.valueOf(snapshot.child("isDoctor").getValue());
-                        isDoctor = Boolean.parseBoolean(doctor);
-                        String sid = String.valueOf(snapshot.child("id").getValue());
-                        id = Integer.parseInt(sid);
-
-                    }catch (Exception ignored){}
-
-                    boolean wasInfoAdded = snapshot.child("age").exists();
-
-                    completeAndBack(isDoctor,id,wasInfoAdded);
+                    isDoctor = snapshot.child("isDoctor").getValue(Boolean.class);
+                    continueToHomepage(isDoctor, uid);
                 }
                 else{
-                    HashMap<String,Object> map = new HashMap<>();
-                    map.put("name",name);
-                    map.put("isDoctor",isDoctor);
-
-                    int rand = new Random().nextInt(99999);
-                    map.put("id",rand);
-
-                    ref.updateChildren(map).addOnCompleteListener(task -> {
-                        if(task.isSuccessful()){
-                            completeAndBack(isDoctor,rand,false);
-                        }
-                        else{
-                            showOrHide(false);
-                            showMessageInTV(null);
-                            Exception exception = task.getException();
-                            String message = (exception == null) ? "Something went wrong" : exception.getMessage();
-                            showAlertDialog("Error occurred",message);
-                        }
-                    });
+                    openAddInfoPage(isDoctor);
                 }
             }
 
@@ -230,7 +200,33 @@ public class CreateAccount extends AppCompatActivity {
 
     }
 
-    private void completeAndBack(Boolean isDoctor, int id, boolean wasInfoAdded){
+    private void openAddInfoPage(boolean amIDoctor){
+        final Intent intent = new Intent(this, (amIDoctor ? DoctorProfile.class : PatientProfile.class));
+        intent.putExtra("from_login_page",true);
+        startActivity(intent);
+
+//        HashMap<String,Object> map = new HashMap<>();
+//        map.put("name",name);
+//        map.put("isDoctor",isDoctor);
+//
+//        int rand = new Random().nextInt(99999);
+//        map.put("id",rand);
+//
+//        ref.updateChildren(map).addOnCompleteListener(task -> {
+//            if(task.isSuccessful()){
+//                continueToHomepage(isDoctor,rand,false);
+//            }
+//            else{
+//                showOrHide(false);
+//                showMessageInTV(null);
+//                Exception exception = task.getException();
+//                String message = (exception == null) ? "Something went wrong" : exception.getMessage();
+//                showAlertDialog("Error occurred",message);
+//            }
+//        });
+    }
+
+    private void continueToHomepage(Boolean isDoctor, String uid){
         if(isDoctor == null){
             showAlertDialog("Error occurred",getString(R.string.something_went_wrong));
             return;
@@ -242,14 +238,14 @@ public class CreateAccount extends AppCompatActivity {
 
         getSp().saveIsSignedIn(true);
         getSp().saveAmIDoctor(isDoctor);
-        getSp().saveMyId(id);
-        showSafeToast("Signed in successfully"); // signed in successfully
+        getSp().saveMyUid(uid);
+        showSafeToast("Signed in successfully");
 
         Intent intent = new Intent(this, HomePage.class);
 
-        getSp().saveWasMyInfoAdded(wasInfoAdded);
+        getSp().saveWasMyInfoAdded(true);
 
-        intent.putExtra("is_doctor",sp.amIDoctor());
+        intent.putExtra("is_doctor", sp.amIDoctor());
         intent.putExtra("force_exit",true);
         startActivity(intent);
     }
@@ -323,6 +319,20 @@ public class CreateAccount extends AppCompatActivity {
             super.onBackPressed();
         }
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
+
+    public void showProgress() {
+        mainDialog = new Dialog(this);
+        mainDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        mainDialog.setContentView(R.layout.progress_bar_2);
+        Window window = mainDialog.getWindow();
+        if(window!=null) window.setBackgroundDrawableResource(android.R.color.transparent);
+        mainDialog.setCanceledOnTouchOutside(false);
+        mainDialog.setCancelable(false);
+        mainDialog.show();
+    }
+    private void dismissMainDialog(){
+        try { mainDialog.dismiss(); }catch (Exception ignored){}
     }
 
 }

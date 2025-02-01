@@ -48,9 +48,11 @@ public class SharedPref {
                 heightFt = spProfile.getString("heightFt",""),
                 heightIn = spProfile.getString("heightIn",""),
                 desc = spProfile.getString("desc",""),
-                gender = spProfile.getString("gender","");
+                gender = spProfile.getString("gender",""),
+                imageUrl = spProfile.getString("imageUrl", "");
+        int intId = spProfile.getInt("int_id",0);
 
-        return new Patient(uid,name,age,weight,gender,heightFt,heightIn,desc);
+        return new Patient(uid, intId, name,age,weight,gender,heightFt,heightIn,desc, imageUrl);
     }
 
     public void saveMyProfile(final Patient mine){
@@ -59,15 +61,22 @@ public class SharedPref {
         SharedPreferences.Editor editor = spProfile.edit();
 
         editor.putString("uid",mine.getUid());
+        editor.putInt("int_id",mine.getIntId());
         editor.putString("name",mine.getName());
         editor.putString("age", mine.getAge());
         editor.putString("weight", mine.getWeight());
         editor.putString("heightFt", mine.getHeightFt());
         editor.putString("heightIn", mine.getHeightIn());
         editor.putString("desc", mine.getDesc());
+        editor.putString("imageUrl", mine.getImageUrl());
         editor.putString("gender", mine.getGender());
 
         editor.apply();
+    }
+
+    public int getMyIntegerId(){
+        SharedPreferences spProfile = activity.getSharedPreferences("sp_profile",MODE_PRIVATE);
+        return spProfile.getInt("int_id",0);
     }
 
     public void saveWasMyInfoAdded(boolean hasInfoAdded){
@@ -89,18 +98,18 @@ public class SharedPref {
         editor.apply();
     }
 
-    public int getMyId(){
-        if(activity == null) return 0;
+    public String getMyUid(){
+        if(activity == null) return "not_found";
 
-        return sp.getInt("my_id",0);
+        return sp.getString("my_id","not_found");
     }
 
-    public void saveMyId(int id){
+    public void saveMyUid(String uid){
         if(activity == null) return;
 
         sp = activity.getSharedPreferences("sp",MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
-        editor.putInt("my_id",id);
+        editor.putString("my_id",uid);
         editor.apply();
     }
 

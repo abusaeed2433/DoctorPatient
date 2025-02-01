@@ -141,7 +141,7 @@ public class VideoActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, REQUESTED_PERMISSIONS, PERMISSION_REQ_ID);
         }
 
-        uid = getSp().getMyId();
+        uid = getSp().getMyIntegerId();
         amIDoctor = getSp().amIDoctor();
 
         setupVideoSDKEngine();

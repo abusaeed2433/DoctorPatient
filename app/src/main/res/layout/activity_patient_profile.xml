@@ -7,7 +7,6 @@
     tools:context=".PatientProfile"
     android:id="@+id/cl_profile_root">
 
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -245,18 +244,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
-
-
-    <ProgressBar
-        android:id="@+id/pb_profile"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginEnd="8dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        app:layout_constraintBottom_toBottomOf="@+id/button_save"
-        app:layout_constraintEnd_toStartOf="@+id/button_save"
-        app:layout_constraintTop_toTopOf="@+id/button_save" />
 
     <android.widget.Button
         android:enabled="false"

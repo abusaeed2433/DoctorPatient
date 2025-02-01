@@ -226,7 +226,7 @@ public class HomePage extends AppCompatActivity implements SnapListener {
         }
 
         Map<String, Object> map = mine.getSavableMap();
-        int myId = getSp().getMyId();
+        String myId = getSp().getMyUid();
         map.put("id",myId);
 
         ref.setValue(map).addOnCompleteListener(task -> {
@@ -533,24 +533,13 @@ public class HomePage extends AppCompatActivity implements SnapListener {
             return;
         }
 
-        int id = -1;
-        String sid = String.valueOf(snapshot.child("id").getValue());
-        try{ id = Integer.parseInt(sid); }catch (Exception ignored){}
-
-        String uid = String.valueOf(snapshot.getKey());
-        String name = String.valueOf(snapshot.child("name").getValue());
-        String age = String.valueOf(snapshot.child("age").getValue());
-        String weight = String.valueOf(snapshot.child("weight").getValue());
-        String hFt = String.valueOf(snapshot.child("heightFt").getValue());
-        String hIn = String.valueOf(snapshot.child("heightIn").getValue());
-        String desc = String.valueOf(snapshot.child("desc").getValue());
-        String gender = String.valueOf(snapshot.child("gender").getValue());
-        Patient patient = new Patient(uid,name,age,weight,gender,hFt,hIn,desc);
-
-        if(id == -1 || isCallingShowing){
+        final Patient patient = snapshot.getValue(Patient.class);
+        if(patient == null) {
+            showSafeToast("Failed to read");
             return;
         }
 
+        if(isCallingShowing) return;
         showCallingDialog(patient,snapshot);
     }
 

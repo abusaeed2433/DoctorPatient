@@ -19,6 +19,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DoctorPatient">
         <activity
+            android:name=".AddPatientInfo"
+            android:exported="false" />
+        <activity
+            android:name=".DoctorProfile"
+            android:exported="false" />
+        <activity
             android:name=".PatientProfile"
             android:exported="false">
             <meta-data
