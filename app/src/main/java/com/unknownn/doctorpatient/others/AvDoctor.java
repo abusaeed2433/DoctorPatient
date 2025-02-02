@@ -2,10 +2,19 @@ package com.unknownn.doctorpatient.others;
 
 import static com.unknownn.doctorpatient.HomePage.UPDATE_TIME_INTERVAL_MAX;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.ServerValue;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class AvDoctor extends Doctor{
 
     private long lastOnlineTime;
     private boolean inCall;
+
+    public AvDoctor() {
+    }
 
     public AvDoctor(String uid, int intId, String name, String gender, String imageUrl, String speciality, int experienceInMonth, long lastOnlineTime, boolean inCall) {
         super(uid, intId, name,gender,imageUrl , speciality, experienceInMonth);
@@ -24,7 +33,6 @@ public class AvDoctor extends Doctor{
     public boolean isInCall() {
         return inCall;
     }
-
     public boolean isTimeInvalid(){
         long curTime = System.currentTimeMillis();
 
@@ -32,7 +40,15 @@ public class AvDoctor extends Doctor{
         return dif > UPDATE_TIME_INTERVAL_MAX;
     }
 
+    public String getSpecialityMessage(){
+        return "Specialist in "+getSpeciality();
+    }
+
     public void setInCall(boolean inCall) {
         this.inCall = inCall;
+    }
+
+    public boolean fullySame(final AvDoctor item){
+        return super.getSpeciality().equals(item.getSpeciality()) && getImageUrl().equals(item.getImageUrl());
     }
 }

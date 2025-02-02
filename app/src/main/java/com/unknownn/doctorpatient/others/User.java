@@ -1,6 +1,10 @@
 package com.unknownn.doctorpatient.others;
 
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class User {
     @PropertyName("uid")

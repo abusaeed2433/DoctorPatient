@@ -21,6 +21,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -142,12 +143,16 @@ public class HomePage extends AppCompatActivity implements SnapListener {
     }
 
     private void startAdapter(){
-        adapter = new AvAdapter(doctor -> {
+        adapter = new AvAdapter(this,doctor -> {
             if(!hasClickedOne){
                 hasClickedOne = true;
                 handleRest(doctor);
             }
         });
+
+        final boolean isLarge = getResources().getBoolean(R.bool.isLargeDevice);
+        final int count = (isLarge) ? 3 : 2;
+        binding.recyclerView.setLayoutManager( new GridLayoutManager(this, count, RecyclerView.VERTICAL, false));
         binding.recyclerView.setAdapter(adapter);
     }
 
@@ -395,14 +400,11 @@ public class HomePage extends AppCompatActivity implements SnapListener {
                 binding.pbHomepage.setVisibility(View.GONE);
             }
             else{
-                Map<String,Object> map = new HashMap<>();
-                map.put("name",mine.getName());
-                map.put("id",mine.getIntId());
+                Map<String,Object> map = mine.getMap();
                 map.put("lastOnline", ServerValue.TIMESTAMP);
                 map.put("inCall", false);
 
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("available/doctor").child(uid);
-
+                final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("available/doctor").child(uid);
                 ref.updateChildren(map).addOnCompleteListener(task -> {
                     if(task.isSuccessful()){
                         binding.pbHomepage.setVisibility(View.GONE);
@@ -587,8 +589,12 @@ public class HomePage extends AppCompatActivity implements SnapListener {
         }
         else{
             Map<String,Object> map = new HashMap<>();
-            map.put("lastOnline",ServerValue.TIMESTAMP);
+            map.put("lastOnlineTime",ServerValue.TIMESTAMP);
             map.put("inCall",false);
+
+            Doctor doctor = (Doctor)getSp().getMyProfile();
+            map.put("speciality",doctor.getSpeciality());
+            map.put("imageUrl",doctor.getImageUrl());
 
             ref.updateChildren(map).addOnCompleteListener(task -> listener.onDataSaved(task.isSuccessful()));
         }
@@ -634,6 +640,21 @@ public class HomePage extends AppCompatActivity implements SnapListener {
                     if(Math.abs(curTime - avDoctor.getLastOnlineTime()) > UPDATE_TIME_INTERVAL_MAX) continue;
 
                     doctors.add(avDoctor);
+                }
+                // add some dummy
+                for(int i=0; i<0; i++){
+                    AvDoctor doctor = new AvDoctor(
+                            "dElGdKzqUpYNJF5amDxAMgkBSZ93",
+                            2816248,
+                            "buu",
+                            "Male",
+                            "https://firebasestorage.googleapis.com/v0/b/doctorpatient-aebc9.appspot.com/o/profile%2FdElGdKzqUpYNJF5amDxAMgkBSZ93%2Fprofile_pic.jpg?alt=media&token=db421a5c-7b75-4c22-8c0e-afb7d59935d5",
+                            "none",
+                            3,
+                            System.currentTimeMillis(),
+                            false
+                    );
+                    doctors.add(doctor);
                 }
                 updateAdapter(doctors);
             }

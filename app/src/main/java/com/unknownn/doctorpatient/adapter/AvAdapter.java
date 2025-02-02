@@ -1,5 +1,6 @@
 package com.unknownn.doctorpatient.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.unknownn.doctorpatient.R;
 import com.unknownn.doctorpatient.others.AvDoctor;
 import com.unknownn.doctorpatient.others.ItemClickListener;
@@ -18,10 +20,13 @@ import com.unknownn.doctorpatient.others.ItemClickListener;
 public class AvAdapter extends ListAdapter<AvDoctor, AvAdapter.ViewHolder> {
 
     private final ItemClickListener listener;
+    private final Context mContext;
+
     private AvDoctor curDoctor;
 
-    public AvAdapter(ItemClickListener listener) {
+    public AvAdapter(Context mContext, ItemClickListener listener) {
         super(callBack);
+        this.mContext = mContext;
         this.listener = listener;
     }
 
@@ -48,21 +53,28 @@ public class AvAdapter extends ListAdapter<AvDoctor, AvAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         curDoctor = getItem(position);
 
-        holder.tvName.setText(curDoctor.getName());
+        holder.tvName.setText(curDoctor.getSpecialityMessage());
+        holder.tvCall.setOnClickListener(v -> listener.onItemClick(getItem(holder.getAdapterPosition())));
 
-        holder.ivCall.setOnClickListener(v -> listener.onItemClick(getItem(holder.getAdapterPosition())));
+        Glide.with(mContext)
+                .load(curDoctor.getImageUrl())
+                .timeout(30 * 1000)
+                .placeholder(R.drawable.doctor_icon)
+                .into(holder.ivProfile);
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder{
 
+        private final ImageView ivProfile;
         private final TextView tvName;
-        private final ImageView ivCall;
+        private final TextView tvCall;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            tvName = itemView.findViewById(R.id.tv_name);
-            ivCall = itemView.findViewById(R.id.iv_video_call);
+            ivProfile = itemView.findViewById(R.id.ivProfile);
+            tvName = itemView.findViewById(R.id.tvName);
+            tvCall = itemView.findViewById(R.id.tvCall);
 
         }
 
