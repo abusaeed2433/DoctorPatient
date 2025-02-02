@@ -12,6 +12,7 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#000000</color>
+    <color name="blueish">#050250</color>
     <color name="white">#FFFFFF</color>
     <color name="red">#FF0000</color>
     <color name="yellow">#FFFF00</color>
@@ -119,4 +120,7 @@
     <color name="person_icon_stroke">#FFFFFF</color>
     <color name="light_red_drawable_color">#FF8D85</color>
     <color name="dark_red">#FF4235</color>
+    <color name="bnvIconColor">#E6000000</color>
+    <color name="speciality_back">#E0E2E2</color>
+    <color name="speciality_back_selected">#8FC15D</color>
 </resources>

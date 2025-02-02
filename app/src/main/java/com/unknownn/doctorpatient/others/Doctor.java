@@ -53,4 +53,9 @@ public class Doctor extends User{
         this.experienceInMonth = experienceInMonth;
     }
 
+    @Exclude
+    public String getSpecialityMessage(){
+        return speciality;
+    }
+
 }

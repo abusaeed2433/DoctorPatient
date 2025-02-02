@@ -1,5 +1,5 @@
 package com.unknownn.doctorpatient.others;
 
 public interface ItemClickListener {
-    void onItemClick(AvDoctor doctor);
+    void onItemClick(Doctor doctor);
 }

@@ -22,12 +22,12 @@
         <activity
             android:name=".DoctorProfile"
             android:exported="false"
-            android:parentActivityName=".HomePage"/>
+            android:parentActivityName=".homepage_doctor.view.DoctorHomePage"/>
 
         <activity
             android:name=".PatientProfile"
             android:exported="false"
-            android:parentActivityName=".HomePage">
+            android:parentActivityName=".homepage_doctor.view.DoctorHomePage">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -65,7 +65,14 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".HomePage"
+            android:name=".homepage_doctor.view.DoctorHomePage"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".homepage_patient.view.PatientHomePage"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

@@ -56,4 +56,17 @@
     <string name="speciality_area">Speciality Area</string>
     <string name="years_of_practice">Years of practice</string>
     <string name="call">Call</string>
+    <string name="home">Home</string>
+    <string name="appointment">Appointment</string>
+    <string name="chats">Chats</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="search_by_name_speciality">Search by name, speciality</string>
+    <string name="search_icon_description">Search box</string>
+    <string name="let_s_find_your_doctor">Let\'s find your doctor</string>
+    <string name="icon_only">Icon only</string>
+    <string name="running_appointment">Running appointment</string>
+    <string name="see_all">See all</string>
+    <string name="no_appointment_right_now">No appointment right now</string>
+    <string name="no_doctor_found">No doctor found</string>
 </resources>

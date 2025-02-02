@@ -1,4 +1,4 @@
-package com.unknownn.doctorpatient;
+package com.unknownn.doctorpatient.homepage_doctor.view;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +36,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.unknownn.doctorpatient.CreateAccount;
+import com.unknownn.doctorpatient.DoctorProfile;
+import com.unknownn.doctorpatient.PatientProfile;
+import com.unknownn.doctorpatient.R;
+import com.unknownn.doctorpatient.VideoActivity;
 import com.unknownn.doctorpatient.adapter.AvAdapter;
 import com.unknownn.doctorpatient.databinding.ActivityHomepageBinding;
 import com.unknownn.doctorpatient.others.AvDoctor;
@@ -44,7 +48,6 @@ import com.unknownn.doctorpatient.others.Doctor;
 import com.unknownn.doctorpatient.others.Patient;
 import com.unknownn.doctorpatient.others.SharedPref;
 import com.unknownn.doctorpatient.others.SnapListener;
-import com.unknownn.doctorpatient.others.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +55,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class HomePage extends AppCompatActivity implements SnapListener {
+public class DoctorHomePage extends AppCompatActivity implements SnapListener {
 
     private static final int UPDATE_TIME_INTERVAL = 10000;
     public static final int UPDATE_TIME_INTERVAL_MAX = 12000;
@@ -116,7 +119,7 @@ public class HomePage extends AppCompatActivity implements SnapListener {
     }
 
     private void setClickListener(){
-        binding.buttonExit.setOnClickListener(v -> new AlertDialog.Builder(HomePage.this)
+        binding.buttonExit.setOnClickListener(v -> new AlertDialog.Builder(DoctorHomePage.this)
                 .setTitle("Exit?")
                 .setMessage("Are you sure you want to exit?")
                 .setCancelable(true)
@@ -146,7 +149,7 @@ public class HomePage extends AppCompatActivity implements SnapListener {
         adapter = new AvAdapter(this,doctor -> {
             if(!hasClickedOne){
                 hasClickedOne = true;
-                handleRest(doctor);
+                //handleRest(doctor);
             }
         });
 
@@ -263,13 +266,13 @@ public class HomePage extends AppCompatActivity implements SnapListener {
         int id = item.getItemId();
 
         if(id == R.id.bar_profile){
-            Intent intent = new Intent(HomePage.this, (amIDoctor ? DoctorProfile.class : PatientProfile.class) );
+            Intent intent = new Intent(DoctorHomePage.this, (amIDoctor ? DoctorProfile.class : PatientProfile.class) );
             startActivity(intent);
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }
         else if(id == R.id.log_out){
             try {
-                new AlertDialog.Builder(HomePage.this)
+                new AlertDialog.Builder(DoctorHomePage.this)
                         .setTitle("LogOut?")
                         .setMessage("Are you sure you want to log-out")
                         .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.dismiss())
@@ -292,7 +295,7 @@ public class HomePage extends AppCompatActivity implements SnapListener {
         client.signOut();
         FirebaseAuth.getInstance().signOut();
 
-        Intent intent = new Intent(HomePage.this,CreateAccount.class);
+        Intent intent = new Intent(DoctorHomePage.this, CreateAccount.class);
         intent.putExtra("force_exit",true);
         startActivity(intent);
     }
@@ -308,7 +311,7 @@ public class HomePage extends AppCompatActivity implements SnapListener {
             String patId = getMyUid();
 
             if(patId != null) {
-                Intent intent = new Intent(HomePage.this, VideoActivity.class);
+                Intent intent = new Intent(DoctorHomePage.this, VideoActivity.class);
                 intent.putExtra("doctor_uid", docId);
                 intent.putExtra("patient_uid", patId);
                 intent.putExtra("token", token);
@@ -483,7 +486,7 @@ public class HomePage extends AppCompatActivity implements SnapListener {
     private void showCallingDialog(final Patient patientInfo, DataSnapshot snapshot){
         isCallingShowing = true;
 
-        callingDialog = new Dialog(HomePage.this);
+        callingDialog = new Dialog(DoctorHomePage.this);
         callingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         callingDialog.setContentView(R.layout.calling_dialog_layout);
 
@@ -541,7 +544,7 @@ public class HomePage extends AppCompatActivity implements SnapListener {
                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
                             .child("available/doctor").child(docId).child("inCall");
                     ref.setValue(true);
-                    Intent intent = new Intent(HomePage.this, VideoActivity.class);
+                    Intent intent = new Intent(DoctorHomePage.this, VideoActivity.class);
                     intent.putExtra("doctor_uid", docId);
                     intent.putExtra("patient_uid", patUid);
                     intent.putExtra("token",token);
@@ -676,7 +679,7 @@ public class HomePage extends AppCompatActivity implements SnapListener {
             binding.tvMessage.setVisibility(View.GONE);
         }
 
-        adapter.submitList(doctors);
+        //adapter.submitList(doctors);
     }
 
     @Override

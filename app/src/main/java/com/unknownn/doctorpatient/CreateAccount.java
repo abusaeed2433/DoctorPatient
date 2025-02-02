@@ -34,6 +34,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.unknownn.doctorpatient.databinding.ActivityCreateAccountBinding;
+import com.unknownn.doctorpatient.homepage_doctor.view.DoctorHomePage;
+import com.unknownn.doctorpatient.homepage_patient.view.PatientHomePage;
 import com.unknownn.doctorpatient.others.Doctor;
 import com.unknownn.doctorpatient.others.MyPopUp;
 import com.unknownn.doctorpatient.others.Patient;
@@ -208,7 +210,7 @@ public class CreateAccount extends AppCompatActivity {
         showSafeToast("Signed in successfully");
 
         dismissMainDialog();
-        final Intent intent = new Intent(this, HomePage.class);
+        final Intent intent = new Intent(this, isDoctor ? DoctorHomePage.class : PatientHomePage.class);
         intent.putExtra("force_exit",true);
         startActivity(intent);
     }

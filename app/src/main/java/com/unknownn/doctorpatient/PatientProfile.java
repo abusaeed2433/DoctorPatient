@@ -27,6 +27,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.unknownn.doctorpatient.databinding.ActivityPatientProfileBinding;
+import com.unknownn.doctorpatient.homepage_doctor.view.DoctorHomePage;
 import com.unknownn.doctorpatient.others.MyPopUp;
 import com.unknownn.doctorpatient.others.Patient;
 import com.unknownn.doctorpatient.others.SharedPref;
@@ -190,7 +191,7 @@ public class PatientProfile extends AppCompatActivity {
 
                 if(isFromLoginPage){
                     getSp().saveIsSignedIn(true);
-                    final Intent intent = new Intent(PatientProfile.this, HomePage.class);
+                    final Intent intent = new Intent(PatientProfile.this, DoctorHomePage.class);
                     intent.putExtra("force_exit",true);
                     startActivity(intent);
                 }

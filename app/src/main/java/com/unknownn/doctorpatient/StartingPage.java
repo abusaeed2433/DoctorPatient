@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.unknownn.doctorpatient.homepage_doctor.view.DoctorHomePage;
+import com.unknownn.doctorpatient.homepage_patient.view.PatientHomePage;
 import com.unknownn.doctorpatient.others.SharedPref;
 
 public class StartingPage extends AppCompatActivity {
@@ -21,8 +23,10 @@ public class StartingPage extends AppCompatActivity {
         Intent intent;
 
         if(sp.isSignedIn()){
-            intent = new Intent(StartingPage.this, HomePage.class);
-            intent.putExtra("is_doctor",sp.amIDoctor());
+            intent = new Intent(
+                    StartingPage.this,
+                    sp.amIDoctor() ? DoctorHomePage.class : PatientHomePage.class
+            );
         }
         else{
             intent = new Intent(StartingPage.this,CreateAccount.class);
@@ -33,11 +37,9 @@ public class StartingPage extends AppCompatActivity {
 
     private void hideNavigationAndStatusBar() {
         View decorView = getWindow().getDecorView();
-        if(decorView!=null){
-            decorView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY );
-        }
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 }

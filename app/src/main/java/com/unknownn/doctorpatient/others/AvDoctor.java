@@ -1,12 +1,6 @@
 package com.unknownn.doctorpatient.others;
 
-import static com.unknownn.doctorpatient.HomePage.UPDATE_TIME_INTERVAL_MAX;
-
-import com.google.firebase.database.Exclude;
-import com.google.firebase.database.ServerValue;
-
-import java.util.HashMap;
-import java.util.Map;
+import static com.unknownn.doctorpatient.homepage_doctor.view.DoctorHomePage.UPDATE_TIME_INTERVAL_MAX;
 
 public class AvDoctor extends Doctor{
 
