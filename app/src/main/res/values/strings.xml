@@ -22,6 +22,7 @@
     <string name="you_are_not_signed_in">You are not signed in</string>
     <string name="processing_request">Processing request…</string>
     <string name="ph_is_calling">%1$s is calling…</string>
+    <string name="ph_only">%1$d</string>
     <string name="not_available">Not available</string>
     <string name="please_wait">Please wait</string>
     <string name="your_message">Your message</string>

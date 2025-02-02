@@ -37,6 +37,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.unknownn.doctorpatient.adapter.AvAdapter;
+import com.unknownn.doctorpatient.databinding.ActivityHomepageBinding;
 import com.unknownn.doctorpatient.others.AvDoctor;
 import com.unknownn.doctorpatient.others.Doctor;
 import com.unknownn.doctorpatient.others.Patient;
@@ -53,10 +54,10 @@ public class HomePage extends AppCompatActivity implements SnapListener {
 
     private static final int UPDATE_TIME_INTERVAL = 10000;
     public static final int UPDATE_TIME_INTERVAL_MAX = 12000;
-    private ProgressBar progressBar;
-    private TextView tvMessage;
-    private RecyclerView recyclerView;
-    private Button buttonExit;
+//    private ProgressBar progressBar;
+//    private TextView tvMessage;
+//    private RecyclerView recyclerView;
+//    private Button buttonExit;
     private AvAdapter adapter;
 
     private boolean amIDoctor = false, forceExit = false, hasDoublePressed = false;
@@ -65,25 +66,21 @@ public class HomePage extends AppCompatActivity implements SnapListener {
     private Runnable runnable = null;
     private Dialog mainDialog, callingDialog;
     private TextView tvProgress;
-    private boolean isCallingShowing = false, inPauseState = false, hasClickedOne = false, wasInfoAdded = true;
+    private boolean isCallingShowing = false, inPauseState = false, hasClickedOne = false;
     private Toast mToast = null;
     private String appId = null, token = null, cName = null;
-    private final String appNo = "0";
+
+    private ActivityHomepageBinding binding = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_homepage);
+        binding = ActivityHomepageBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         amIDoctor = getSp().amIDoctor();
         forceExit = getIntent().getBooleanExtra("force_exit",false);
 
-        progressBar = findViewById(R.id.pb_homepage);
-        tvMessage = findViewById(R.id.tv_message);
-        recyclerView = findViewById(R.id.recycler_view);
-        buttonExit = findViewById(R.id.button_exit);
-
-        retrieveBasicInfo();
         downloadToken();
         startAdapter();
         setClickListener();
@@ -96,26 +93,10 @@ public class HomePage extends AppCompatActivity implements SnapListener {
             showInTv(getString(R.string.getting_active_doc_list_dot));
             downloadOnline();
         }
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user != null) {
-            boolean isEmailVerified = user.isEmailVerified();
-            showSafeToast( "Verified: "+isEmailVerified );
-        }
-
-    }
-
-    private void retrieveBasicInfo(){
-        wasInfoAdded = getSp().wasMyInfoAdded(amIDoctor);
-
-        if(!wasInfoAdded){
-            requestToAddInfo();
-        }
-
     }
 
     private void downloadToken(){
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("token").child(appNo);
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("token/0");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -132,7 +113,7 @@ public class HomePage extends AppCompatActivity implements SnapListener {
     }
 
     private void setClickListener(){
-        buttonExit.setOnClickListener(v -> new AlertDialog.Builder(HomePage.this)
+        binding.buttonExit.setOnClickListener(v -> new AlertDialog.Builder(HomePage.this)
                 .setTitle("Exit?")
                 .setMessage("Are you sure you want to exit?")
                 .setCancelable(true)
@@ -165,7 +146,7 @@ public class HomePage extends AppCompatActivity implements SnapListener {
                 handleRest(doctor);
             }
         });
-        recyclerView.setAdapter(adapter);
+        binding.recyclerView.setAdapter(adapter);
     }
 
     private SharedPref getSp(){
@@ -176,16 +157,10 @@ public class HomePage extends AppCompatActivity implements SnapListener {
     }
 
     private void showInTv(String message){
-        tvMessage.setText(message);
+        binding.tvMessage.setText(message);
     }
 
     private void handleRest(AvDoctor doctor){
-
-        if(!wasInfoAdded){
-            requestToAddInfo();
-            return;
-        }
-
         if(doctor == null) {
             hasClickedOne = false;
             return;
@@ -197,7 +172,7 @@ public class HomePage extends AppCompatActivity implements SnapListener {
             return;
         }
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user == null){
             showSnackBar(getString(R.string.you_are_not_signed_in));
             hasClickedOne = false;
@@ -210,26 +185,14 @@ public class HomePage extends AppCompatActivity implements SnapListener {
             return;
         }
 
-        String uid = user.getUid();
+        final String uid = user.getUid();
         showProgress(null,doctor.getUid(),uid);
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
                 .child("request").child(doctor.getUid()).child(uid);
 
+        final Patient mine = (Patient)getSp().getMyProfile();
 
-
-        Patient mine = getSp().getMyProfile();
-        if(mine == null){
-            showSafeToast("Your info isn't found");
-            hasClickedOne = false;
-            showSnackBar(getString(R.string.not_available));
-            return;
-        }
-
-        Map<String, Object> map = mine.getSavableMap();
-        String myId = getSp().getMyUid();
-        map.put("id",myId);
-
-        ref.setValue(map).addOnCompleteListener(task -> {
+        ref.setValue(mine).addOnCompleteListener(task -> {
             hasClickedOne = false;
             if(!task.isSuccessful()){
                 dismissMainDialog();
@@ -242,28 +205,9 @@ public class HomePage extends AppCompatActivity implements SnapListener {
         });
     }
 
-    private void requestToAddInfo(){
-        try {
-            AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
-            builder.setTitle("Missing necessary info");
-            builder.setMessage("You need to add more details about you before calling a doctor");
-            builder.setNegativeButton(R.string.later,null);
-            builder.setPositiveButton(R.string.add_now, (dialog, which) -> {
-                Intent intent = new Intent(HomePage.this,PatientProfile.class);
-                startActivity(intent);
-            });
-            builder.setCancelable(false);
-            builder.show();
-        }
-        catch (Exception ignored){}
-    }
-
     @Override
     protected void onResumeFragments() {
         super.onResumeFragments();
-        try{
-            wasInfoAdded = getSp().wasMyInfoAdded(amIDoctor);
-        }catch (Exception ignored){}
     }
 
     private void addCallUpdateListener(String docUid, String myUid){
@@ -444,25 +388,24 @@ public class HomePage extends AppCompatActivity implements SnapListener {
 
 
     private void updateMyStatus(){
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user == null){
             showSnackBar(getString(R.string.something_went_wrong));
-            tvMessage.setText(R.string.restart_app);
-            progressBar.setVisibility(View.GONE);
+            binding.tvMessage.setText(R.string.restart_app);
+            binding.pbHomepage.setVisibility(View.GONE);
             return;
         }
 
-        String uid = user.getUid();
-
+        final String uid = user.getUid();
         downloadMyData(uid, mine -> {
             if(mine == null){
-                tvMessage.setText(R.string.failed_to_fetch_data);
-                progressBar.setVisibility(View.GONE);
+                binding.tvMessage.setText(R.string.failed_to_fetch_data);
+                binding.pbHomepage.setVisibility(View.GONE);
             }
             else{
                 Map<String,Object> map = new HashMap<>();
                 map.put("name",mine.getName());
-                map.put("id",mine.getId());
+                map.put("id",mine.getIntId());
                 map.put("lastOnline", ServerValue.TIMESTAMP);
                 map.put("inCall", false);
 
@@ -470,14 +413,14 @@ public class HomePage extends AppCompatActivity implements SnapListener {
 
                 ref.updateChildren(map).addOnCompleteListener(task -> {
                     if(task.isSuccessful()){
-                        progressBar.setVisibility(View.GONE);
-                        tvMessage.setText(R.string.notify_message);
+                        binding.pbHomepage.setVisibility(View.GONE);
+                        binding.tvMessage.setText(R.string.notify_message);
                         addRequestListener(uid);
                         startRunningLoop(uid);
                     }
                     else{
-                        progressBar.setVisibility(View.GONE);
-                        tvMessage.setVisibility(View.GONE);
+                        binding.pbHomepage.setVisibility(View.GONE);
+                        binding.tvMessage.setVisibility(View.GONE);
                         showSnackBar(getString(R.string.something_went_wrong));
                     }
                 });
@@ -629,14 +572,14 @@ public class HomePage extends AppCompatActivity implements SnapListener {
                 getColor(R.color.text_color_6),
                 getColor(R.color.text_color_7)
         };
-        tvMessage.setTextColor(color[0]);
+        binding.tvMessage.setTextColor(color[0]);
         AtomicInteger ind = new AtomicInteger(1);
 
         runnable = new Runnable() {
             @Override
             public void run() {
                 updateTime(ref, isSuccessful -> {
-                    tvMessage.setTextColor(color[ind.get() %7]);
+                    binding.tvMessage.setTextColor(color[ind.get() %7]);
                     mHandler.postDelayed(this,UPDATE_TIME_INTERVAL);
                     ind.set((ind.get() + 1) % 7);
                 });
@@ -667,21 +610,12 @@ public class HomePage extends AppCompatActivity implements SnapListener {
         void onDataRead(Doctor mine);
     }
 
-    private void downloadMyData(@NonNull String uid,DataReadListener listener){
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
+    private void downloadMyData(@NonNull String uid, DataReadListener listener){
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot ds) {
-                String name = String.valueOf(ds.child("name").getValue());
-                String sid = String.valueOf(ds.child("id").getValue());
-                String uid = String.valueOf(ds.getKey());
-
-                int id = -1;
-                try{
-                    id = Integer.parseInt(sid);
-                }catch (Exception ignored){}
-
-                Doctor doctor = new Doctor(name,uid,id);
+                final Doctor doctor = ds.getValue(Doctor.class);
                 listener.onDataRead(doctor);
             }
 
@@ -693,35 +627,21 @@ public class HomePage extends AppCompatActivity implements SnapListener {
     }
 
     private void downloadOnline(){
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("available/doctor");
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("available/doctor");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<AvDoctor> doctors = new ArrayList<>();
 
                 for(DataSnapshot ds : snapshot.getChildren()){
-                    String name = String.valueOf(ds.child("name").getValue());
-                    String sid = String.valueOf(ds.child("id").getValue());
-                    String lot = String.valueOf(ds.child("lastOnline").getValue());
-                    String call = String.valueOf(ds.child("inCall").getValue());
-                    String uid = String.valueOf(ds.getKey());
 
-                    int id = -1;
-                    long timestamp = 0;
-                    boolean inCall = false;
-                    try{
-                        id = Integer.parseInt(sid);
-                        timestamp = Long.parseLong(lot);
-                        inCall = Boolean.parseBoolean(call);
-                    }catch (Exception ignored){}
+                    final AvDoctor avDoctor = ds.getValue(AvDoctor.class);
+                    if(avDoctor == null) continue;
 
-                    long curTime = System.currentTimeMillis();
-                    System.out.println("printing_time ->  " +curTime+" - "+timestamp + " = " + (curTime-timestamp));
-                    if(id == -1 || Math.abs(curTime-timestamp) > UPDATE_TIME_INTERVAL_MAX) continue;
+                    final long curTime = System.currentTimeMillis();
+                    if(Math.abs(curTime - avDoctor.getLastOnlineTime()) > UPDATE_TIME_INTERVAL_MAX) continue;
 
-                    AvDoctor doctor = new AvDoctor(name,uid,id,timestamp,inCall);
-
-                    doctors.add(doctor);
+                    doctors.add(avDoctor);
                 }
                 updateAdapter(doctors);
             }
@@ -734,13 +654,13 @@ public class HomePage extends AppCompatActivity implements SnapListener {
     }
 
     private void updateAdapter(List<AvDoctor> doctors){
-        progressBar.setVisibility(View.GONE);
+        binding.pbHomepage.setVisibility(View.GONE);
         if(doctors.isEmpty()){
-            tvMessage.setText(R.string.no_doctor_av);
-            tvMessage.setVisibility(View.VISIBLE);
+            binding.tvMessage.setText(R.string.no_doctor_av);
+            binding.tvMessage.setVisibility(View.VISIBLE);
         }
         else{
-            tvMessage.setVisibility(View.GONE);
+            binding.tvMessage.setVisibility(View.GONE);
         }
 
         adapter.submitList(doctors);

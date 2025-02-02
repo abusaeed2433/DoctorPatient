@@ -1,36 +1,43 @@
 package com.unknownn.doctorpatient.others;
 
+import com.google.firebase.database.PropertyName;
+
 import java.util.Random;
 
-public class Doctor {
+public class Doctor extends User{
+    @PropertyName("speciality")
+    private String speciality;
+    @PropertyName("experience_in_month")
+    private int experienceInMonth;
 
-    private final String name,uid;
-    private final int id;
-
-    public Doctor(String name, String uid,int id) {
-        this.name = name;
-        this.uid = uid;
-        this.id = id;
+    public Doctor() {
+        super();
     }
 
-    public int getId() {
-        return id;
+    public Doctor(String uid, int intId, String name, String imageUrl, String speciality, int experienceInMonth) {
+        super(uid,intId,name,imageUrl,true);
+        this.speciality = speciality;
+        this.experienceInMonth = experienceInMonth;
     }
 
-    public String getName() {
-        return name;
+    public String getSpeciality() {
+        return speciality;
     }
 
-    public String getUid() {
-        return uid;
+    public void setSpeciality(String speciality) {
+        this.speciality = speciality;
+    }
+
+    public int getExperienceInMonth() {
+        return experienceInMonth;
+    }
+
+    public void setExperienceInMonth(int experienceInMonth) {
+        this.experienceInMonth = experienceInMonth;
     }
 
     public boolean fullySame(final Doctor item){
-        return name.equals(item.name) && uid.equals(item.uid);
-    }
-
-    public int getIntId(){
-        return new Random().nextInt(99999);
+        return speciality.equals(item.speciality) && experienceInMonth == item.experienceInMonth;
     }
 
 }

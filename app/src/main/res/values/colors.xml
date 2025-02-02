@@ -116,5 +116,7 @@
     <color name="very_light_blue_little_dark">#E9F8FF</color>
     <color name="redish">#EC8517</color>
     <color name="progressBack">#10000000</color>
-
+    <color name="person_icon_stroke">#FFFFFF</color>
+    <color name="light_red_drawable_color">#FF8D85</color>
+    <color name="dark_red">#FF4235</color>
 </resources>

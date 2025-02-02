@@ -2,14 +2,19 @@ package com.unknownn.doctorpatient;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -18,13 +23,18 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
 import com.unknownn.doctorpatient.databinding.ActivityPatientProfileBinding;
 import com.unknownn.doctorpatient.others.MyPopUp;
 import com.unknownn.doctorpatient.others.Patient;
 import com.unknownn.doctorpatient.others.SharedPref;
+import com.unknownn.doctorpatient.others.User;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class PatientProfile extends AppCompatActivity {
 
@@ -36,6 +46,9 @@ public class PatientProfile extends AppCompatActivity {
     private boolean isFromLoginPage = false;
     private Dialog mainDialog = null;
 
+    private Uri photoUri = null;
+    private ActivityResultLauncher<String> mGetContent;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +58,9 @@ public class PatientProfile extends AppCompatActivity {
 
         isFromLoginPage = getIntent().getBooleanExtra("from_login_page",false);
 
+        initializeCallBack();
         setClickListener();
-        loadFromDb();
+        loadFromDatabase();
     }
 
     private void setClickListener(){
@@ -62,10 +76,60 @@ public class PatientProfile extends AppCompatActivity {
             final String desc = String.valueOf(binding.editTextDescription.getText());
             final String gender = isMale ? "Male" : "Female";
 
-            final String uid = new SharedPref(PatientProfile.this).getMyUid();
-            final Patient patient = new Patient(uid, getUniqueID(), name,age,weight,gender,hFt,hIn,desc,null);
-            validateAndSave(patient);
+            for(String str : List.of(name, age, weight, hFt, hIn, desc, gender)){
+                if( isTextInValid(str) ){
+                    showSafeToast("Fill all the form");
+                    return;
+                }
+            }
+
+            final User oldUser = new SharedPref(PatientProfile.this).getMyProfile();
+            final Patient patient = new Patient(
+                    oldUser.getUid(),
+                    (oldUser.getIntId() == -1) ? getUniqueID() : oldUser.getIntId(),
+                    name,
+                    Integer.parseInt(age),
+                    Integer.parseInt(weight),
+                    gender,
+                    Integer.parseInt(hFt),
+                    Integer.parseInt(hIn),
+                    desc,
+                    null
+            );
+
+            saveToStorageAndDatabase(patient);
         });
+
+        binding.imageViewProfile.setOnClickListener(v -> mGetContent.launch("image/*"));
+    }
+
+    private void initializeCallBack(){
+        mGetContent = registerForActivityResult(
+                new ActivityResultContracts.GetContent(), result -> {
+                    if(result == null){
+                        showSafeToast("No image picked");
+                        return;
+                    }
+                    photoUri = result;
+                    showImage(photoUri);
+                }
+        );
+
+    }
+
+    private void showImage(Uri uri){
+        try{
+            Glide.with(this)
+                    .load(uri)
+                    .into(binding.imageViewProfile);
+        }catch (Exception ignored){}
+    }
+    private void showImage(String url){
+        try{
+            Glide.with(this)
+                    .load(url)
+                    .into(binding.imageViewProfile);
+        }catch (Exception ignored){}
     }
 
     private int getUniqueID(){
@@ -75,34 +139,56 @@ public class PatientProfile extends AppCompatActivity {
         return (int)duration.toSeconds();
     }
 
-    private void validateAndSave(final Patient patient){
-        if( isTextInValid(patient.getName()) ){ showSafeToast("Enter your name"); isProcessing = false; return; }
-        if( isTextInValid(patient.getAge()) ){ showSafeToast("Enter your age"); isProcessing = false; return; }
-        if( isTextInValid(patient.getWeight()) ){ showSafeToast("Enter your weight"); isProcessing = false; return; }
-        if( isTextInValid(patient.getHeightFt()) ){ showSafeToast("Enter your height(ft)"); isProcessing = false; return; }
-        if( isTextInValid(patient.getHeightIn()) ){ showSafeToast("Enter your height(in)"); isProcessing = false; return; }
-        if( isTextInValid(patient.getDesc()) ){ showSafeToast("Enter your disease details"); isProcessing = false; return; }
-
-        saveToDatabase(patient);
-    }
-
-    private void saveToDatabase(final Patient patient){
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private void saveToStorageAndDatabase(final Patient patient){
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user == null){
             isProcessing = false;
             showAlertDialog("Error occurred", getString(R.string.you_are_not_signed_in));
             return;
         }
 
+        showProgress();
+
+        final StorageReference ref = FirebaseStorage.getInstance().getReference()
+                .child("profile").child(patient.getUid()).child("profile_pic.jpg");
+        final StorageMetadata metadata = new StorageMetadata.Builder()
+                .setContentType("image/jpeg")
+                .build();
+
+        if(photoUri == null){
+            final String imageUrl = getSp().getMyProfile().getImageUrl();
+            saveToDatabase(imageUrl, patient);
+            return;
+        }
+
+        ref.putFile(photoUri,metadata)
+                .addOnSuccessListener(taskSnapshot ->
+                        taskSnapshot.getStorage().getDownloadUrl()
+                                .addOnSuccessListener(uri -> saveToDatabase(uri.toString(), patient))
+                                .addOnFailureListener(e -> {
+                                    isProcessing = false;
+                                    dismissMainDialog();
+                                    showAlertDialog("Error occurred", e.getMessage());
+                                }))
+                .addOnFailureListener(e -> {
+                    isProcessing = false;
+                    dismissMainDialog();
+                    showAlertDialog("Error occurred", e.getMessage());
+                });
+    }
+
+    private void saveToDatabase(String imageUrl, Patient patient){
+        patient.setImageUrl(imageUrl);
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("users").child(patient.getUid());
         ref.setValue(patient).addOnCompleteListener(task -> {
+            isProcessing = false;
             if(task.isSuccessful()){
                 dismissMainDialog();
                 showSafeToast("Successfully saved");
-                getSp().saveWasMyInfoAdded(true);
                 getSp().saveMyProfile(patient);
 
                 if(isFromLoginPage){
+                    getSp().saveIsSignedIn(true);
                     final Intent intent = new Intent(PatientProfile.this, HomePage.class);
                     intent.putExtra("force_exit",true);
                     startActivity(intent);
@@ -110,15 +196,14 @@ public class PatientProfile extends AppCompatActivity {
             }
             else{
                 dismissMainDialog();
-                Exception exception = task.getException();
+                final Exception exception = task.getException();
                 final String message = (exception == null) ? getString(R.string.something_went_wrong) : exception.getMessage();
                 showAlertDialog("Error occurred", message);
             }
         });
-
     }
 
-    private void loadFromDb(){
+    private void loadFromDatabase(){
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user == null){
             showAlertDialog("Error occurred", getString(R.string.you_are_not_signed_in));
@@ -160,14 +245,15 @@ public class PatientProfile extends AppCompatActivity {
 
     private void processData(final Patient patient){
         if(patient == null) return;
+        if(binding == null) return;
 
         getSp().saveMyProfile(patient);
         binding.editTextName.setText(patient.getName());
-        binding.editTextAge.setText(patient.getAge());
-        binding.editTextWeight.setText(patient.getWeight());
+        binding.editTextAge.setText( getString(R.string.ph_only,patient.getAge()) );
+        binding.editTextWeight.setText( getString(R.string.ph_only,patient.getWeight()) );
 
-        binding.editTextHeightFt.setText(patient.getHeightFt());
-        binding.editTextHeightIn.setText(patient.getHeightIn());
+        binding.editTextHeightFt.setText( getString(R.string.ph_only,patient.getHeightFt()) );
+        binding.editTextHeightIn.setText( getString(R.string.ph_only,patient.getHeightIn()) );
         binding.editTextDescription.setText(patient.getDesc());
 
         if(patient.getGender().equalsIgnoreCase("female")){
@@ -176,6 +262,7 @@ public class PatientProfile extends AppCompatActivity {
         else{
             binding.radioButtonMale.setChecked(true);
         }
+        showImage(patient.getImageUrl());
     }
 
     private boolean isTextInValid(String text){
@@ -206,7 +293,7 @@ public class PatientProfile extends AppCompatActivity {
         snackbar.show();
     }
 
-    public void showProgress2() {
+    public void showProgress() {
         mainDialog = new Dialog(this);
         mainDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         mainDialog.setContentView(R.layout.progress_bar_2);
@@ -220,4 +307,18 @@ public class PatientProfile extends AppCompatActivity {
         try { mainDialog.dismiss(); }catch (Exception ignored){}
     }
 
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            super.onBackPressed();
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
 }

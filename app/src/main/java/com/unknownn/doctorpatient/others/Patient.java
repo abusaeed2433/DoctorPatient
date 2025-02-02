@@ -6,133 +6,105 @@ import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Patient {
-    @PropertyName("uid")
-    private String uid;
-
-    @PropertyName("int_id")
-    private int intId;
-
-    @PropertyName("name")
-    private String name;
-
+public class Patient extends User{
     @PropertyName("age")
-    private String age;
+    private int age;
 
     @PropertyName("weight")
-    private String weight;
+    private int weight;
 
     @PropertyName("gender")
     private String gender;
 
     @PropertyName("height_ft")
-    private String heightFt;
+    private int heightFt;
 
     @PropertyName("height_in")
-    private String heightIn;
+    private int heightIn;
 
     @PropertyName("disease_desc")
     private String desc;
 
-    @PropertyName("image_url")
-    private String imageUrl;
-
     public Patient() {
-        this.uid = "";
-        this.intId = -1;
-        this.name = "";
-        this.age = "";
-        this.weight = "";
+        super();
+        this.age = 0;
+        this.weight = 0;
         this.gender = "";
-        this.heightFt = "";
-        this.heightIn = "";
+        this.heightFt = 0;
+        this.heightIn = 0;
         this.desc = "";
-        this.imageUrl = "";
     }
 
-    public Patient(String uid, int intId, String name, String age, String weight, String gender, String heightFt, String heightIn, String desc, String imageUrl) {
-        this.uid = uid;
-        this.intId = intId;
-        this.name = name;
+    public Patient(String uid, int intId, String name, int age, int weight, String gender, int heightFt, int heightIn, String desc, String imageUrl) {
+        super(uid,intId,name,imageUrl,false);
+
         this.age = age;
         this.weight = weight;
         this.gender = gender;
         this.heightFt = heightFt;
         this.heightIn = heightIn;
         this.desc = desc;
-        this.imageUrl = imageUrl;
     }
 
-    public void setAge(String age) {
-        this.age = age;
-    }
-
-    public void setWeight(String weight) {
-        this.weight = weight;
+    public String getGender() {
+        return gender;
     }
 
     public void setGender(String gender) {
         this.gender = gender;
     }
 
-    public void setHeightFt(String heightFt) {
+    public int getHeightFt() {
+        return heightFt;
+    }
+
+    public void setHeightFt(int heightFt) {
         this.heightFt = heightFt;
     }
 
-    public void setHeightIn(String heightIn) {
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    public int getHeightIn() {
+        return heightIn;
+    }
+
+    public void setHeightIn(int heightIn) {
         this.heightIn = heightIn;
+    }
+
+    public String getDesc() {
+        return desc;
     }
 
     public void setDesc(String desc) {
         this.desc = desc;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public int getIntId() {
-        return intId;
-    }
-
-    public void setIntId(int intId) {
-        this.intId = intId;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-
-    public String getUid() {
-        return uid;
-    }
-
-    public Map<String, Object> getSavableMap(){
-        final Map<String, Object> map = new HashMap<>();
-        map.put("name",name);
-        map.put("age",age);
-        map.put("weight",weight);
-        map.put("heightFt",heightFt);
-        map.put("heightIn",heightIn);
-        map.put("desc",desc);
-        map.put("gender",gender);
-
-        return map;
-    }
-
+    @Exclude
     public SpannableStringBuilder getFormattedString(){
 
         try {
-            SpannableStringBuilder ans = new SpannableStringBuilder("A patient named " + name);
+            SpannableStringBuilder ans = new SpannableStringBuilder("A patient named " + super.getName());
 
             int prev = 15;
             MyPair[] pairs = new MyPair[6];
@@ -140,21 +112,21 @@ public class Patient {
             pairs[0] = new MyPair(prev, ans.length());
 
             prev = ans.length();
-            ans.append(", age: ").append(age);
+            ans.append(", age: ").append(age+"");
             pairs[1] = new MyPair(prev + 6, ans.length());
 
 
             prev = ans.length();
-            ans.append(", weight: ").append(weight).append("kg");
+            ans.append(", weight: ").append(weight+"kg");
             pairs[2] = new MyPair(prev + 9, ans.length());
 
 
             prev = ans.length();
-            ans.append(", height: ").append(heightFt).append("ft");
+            ans.append(", height: ").append(heightFt+"ft");
             pairs[3] = new MyPair(prev + 9, ans.length());
 
             prev = ans.length();
-            ans.append(" ").append(heightIn).append("in");
+            ans.append(" ").append(heightIn+"in");
             pairs[4] = new MyPair(prev, ans.length());
 
             ans.append(" is calling you. ");
@@ -178,11 +150,11 @@ public class Patient {
 
         }catch (Exception ignored){
             SpannableStringBuilder ans = new SpannableStringBuilder();
-            ans.append("A patient named ").append(name);
-            ans.append(", age: ").append(age);
-            ans.append(", weight: ").append(weight).append("kg");
-            ans.append(", height: ").append(heightFt).append("ft");
-            ans.append(" ").append(heightIn).append("in");
+            ans.append("A patient named ").append(super.getName());
+            ans.append(", age: "+age);
+            ans.append(", weight: "+weight).append("kg");
+            ans.append(", height: "+heightFt).append("ft");
+            ans.append(" "+heightIn).append("in");
             ans.append(" is calling you. ");
 
             if (gender.equalsIgnoreCase("female")) ans.append("Her ");
@@ -191,45 +163,6 @@ public class Patient {
 
             return ans;
         }
-    }
-
-    public String getName() {
-        if(name.equalsIgnoreCase("null")) return "";
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAge() {
-        if(age.equalsIgnoreCase("null")) return "";
-        return age;
-    }
-
-    public String getWeight() {
-        if(weight.equalsIgnoreCase("null")) return "";
-        return weight;
-    }
-
-    public String getGender() {
-        if(gender.equalsIgnoreCase("null")) return "";
-        return gender;
-    }
-
-    public String getHeightFt() {
-        if(heightFt.equalsIgnoreCase("null")) return "";
-        return heightFt;
-    }
-
-    public String getHeightIn() {
-        if(heightIn.equalsIgnoreCase("null")) return "0";
-        return heightIn;
-    }
-
-    public String getDesc() {
-        if(desc.equalsIgnoreCase("null")) return "";
-        return desc;
     }
 
 }

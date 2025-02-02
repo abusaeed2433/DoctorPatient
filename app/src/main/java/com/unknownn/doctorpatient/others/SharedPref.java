@@ -37,46 +37,66 @@ public class SharedPref {
         return sp.getBoolean("was_my_info_added",true);
     }
 
-    public Patient getMyProfile(){
+    public User getMyProfile(){
         if(activity == null) return null;
         SharedPreferences spProfile = activity.getSharedPreferences("sp_profile",MODE_PRIVATE);
 
-        String uid = spProfile.getString("uid",""),
-                name = spProfile.getString("name",""),
-                age = spProfile.getString("age",""),
-                weight = spProfile.getString("weight",""),
-                heightFt = spProfile.getString("heightFt",""),
-                heightIn = spProfile.getString("heightIn",""),
-                desc = spProfile.getString("desc",""),
-                gender = spProfile.getString("gender",""),
-                imageUrl = spProfile.getString("imageUrl", "");
-        int intId = spProfile.getInt("int_id",0);
+        final String uid = spProfile.getString("uid",null);
+        final int intId = spProfile.getInt("int_id",-1);
+        final String name = spProfile.getString("name",null);
+        final String imageUrl = spProfile.getString("image_url", null);
+        final boolean isDoctor = spProfile.getBoolean("is_doctor", false);
 
-        return new Patient(uid, intId, name,age,weight,gender,heightFt,heightIn,desc, imageUrl);
+        if( isDoctor ) {
+            final int age = spProfile.getInt("age",-1);
+            final int weight = spProfile.getInt("weight",-1);
+            final int heightFt = spProfile.getInt("height_ft", -1);
+            final int heightIn = spProfile.getInt("height_in", -1);
+            final String desc = spProfile.getString("desc", null);
+            final String gender = spProfile.getString("gender", null);
+
+            return new Patient(uid, intId, name, age, weight, gender, heightFt, heightIn, desc,imageUrl);
+        }
+        else{
+            final String speciality = spProfile.getString("speciality", null);
+            final int experienceInMonth = spProfile.getInt("experience_in_month",-1);
+
+            return new Doctor(uid,intId,name,imageUrl,speciality, experienceInMonth);
+        }
     }
 
-    public void saveMyProfile(final Patient mine){
+    public void saveMyProfile(User user){
         if(activity == null) return;
         SharedPreferences spProfile = activity.getSharedPreferences("sp_profile",MODE_PRIVATE);
         SharedPreferences.Editor editor = spProfile.edit();
 
-        editor.putString("uid",mine.getUid());
-        editor.putInt("int_id",mine.getIntId());
-        editor.putString("name",mine.getName());
-        editor.putString("age", mine.getAge());
-        editor.putString("weight", mine.getWeight());
-        editor.putString("heightFt", mine.getHeightFt());
-        editor.putString("heightIn", mine.getHeightIn());
-        editor.putString("desc", mine.getDesc());
-        editor.putString("imageUrl", mine.getImageUrl());
-        editor.putString("gender", mine.getGender());
+        editor.putString("uid",user.getUid());
+        editor.putInt("int_id",user.getIntId());
+        editor.putString("name",user.getName());
+        editor.putString("image_url", user.getImageUrl());
+        editor.putBoolean("is_doctor", user.isDoctor());
+
+        if( user instanceof Patient ) {
+            final Patient patient = (Patient)user;
+            editor.putInt("age", patient.getAge());
+            editor.putInt("weight", patient.getWeight());
+            editor.putInt("height_ft", patient.getHeightFt());
+            editor.putInt("height_in", patient.getHeightIn());
+            editor.putString("desc", patient.getDesc());
+            editor.putString("gender", patient.getGender());
+        }
+        else{
+            final Doctor doctor = (Doctor) user;
+            editor.putString("speciality", doctor.getSpeciality());
+            editor.putInt("experience_in_month", doctor.getExperienceInMonth());
+        }
 
         editor.apply();
     }
 
     public int getMyIntegerId(){
         SharedPreferences spProfile = activity.getSharedPreferences("sp_profile",MODE_PRIVATE);
-        return spProfile.getInt("int_id",0);
+        return spProfile.getInt("int_id",-1);
     }
 
     public void saveWasMyInfoAdded(boolean hasInfoAdded){

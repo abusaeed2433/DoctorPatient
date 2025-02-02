@@ -7,8 +7,8 @@ public class AvDoctor extends Doctor{
     private long lastOnlineTime;
     private boolean inCall;
 
-    public AvDoctor(String name, String uid, int id, long lastOnlineTime, boolean inCall) {
-        super(name, uid, id);
+    public AvDoctor(String uid, int intId, String name, String imageUrl, String speciality, int experienceInMonth, long lastOnlineTime, boolean inCall) {
+        super(uid, intId, name, imageUrl, speciality, experienceInMonth);
         this.lastOnlineTime = lastOnlineTime;
         this.inCall = inCall;
     }

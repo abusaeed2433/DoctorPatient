@@ -34,25 +34,21 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.unknownn.doctorpatient.databinding.ActivityCreateAccountBinding;
+import com.unknownn.doctorpatient.others.Doctor;
 import com.unknownn.doctorpatient.others.MyPopUp;
+import com.unknownn.doctorpatient.others.Patient;
 import com.unknownn.doctorpatient.others.SharedPref;
+import com.unknownn.doctorpatient.others.User;
 
 public class CreateAccount extends AppCompatActivity {
 
     private static final int PERMISSION_REQ_ID = 22;
     private static final String[] REQUESTED_PERMISSIONS = { Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA };
 
-//    private RelativeLayout rlSignIn, rlDoctor, rlPatient;
-//    private ProgressBar pbSignIn;
-//    private Button buttonSignIn;
-//    private TextView tvSignInMessage;
-//
-//    private TextView tvSelected;
-
     private GoogleSignInClient client;
     private ActivityResultLauncher<Intent> mGetContent;
     private FirebaseAuth mAuth;
-    private boolean isProgressShowing = false, forceExit = false;
+    private boolean forceExit = false;
     private SharedPref sp = null;
     private Boolean isDoctor = null;
     private Dialog mainDialog = null;
@@ -64,14 +60,6 @@ public class CreateAccount extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityCreateAccountBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-//        tvSignInMessage = findViewById(R.id.tv_sign_in_message);
-//        rlSignIn = findViewById(R.id.rl_sign_in);
-//        pbSignIn = findViewById(R.id.pb_sign_in);
-//        buttonSignIn = findViewById(R.id.button_sign_in);
-//        tvSelected = findViewById(R.id.tv_selected);
-//        rlDoctor = findViewById(R.id.rl_d);
-//        rlPatient = findViewById(R.id.rl_p);
 
         forceExit = getIntent().getBooleanExtra("force_exit",false);
 
@@ -97,7 +85,7 @@ public class CreateAccount extends AppCompatActivity {
     }
 
     private void setClicked(boolean amIDoctor){
-        String text = amIDoctor ? "Doctor" : "Patient";
+        final String text = amIDoctor ? "Doctor" : "Patient";
 
         binding.tvSelected.setText(text);
         binding.tvSelected.setVisibility(View.VISIBLE);
@@ -119,7 +107,7 @@ public class CreateAccount extends AppCompatActivity {
                     connectToFirebase(account);
                 }
                 catch (ApiException e) {
-                    showAlertDialog("Error occurred", getString(R.string.something_went_wrong));
+                    showAlertDialog("Error occurred", getString(R.string.something_went_wrong)+":"+e.getMessage());
                     //binding.tvSignInMessage.setText(e.getMessage());
                 }
             }
@@ -138,62 +126,66 @@ public class CreateAccount extends AppCompatActivity {
         showProgress();
 
         mAuth = FirebaseAuth.getInstance();
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        final AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
 
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
-                    dismissMainDialog();
                     if (task.isSuccessful()) {
                         checkUserExistence();
                     }
                     else {
-                        showOrHide(false);
+                        dismissMainDialog();
                         showMessageInTV(null);
-                        showAlertDialog("Error occurred", "Something went wrong. Try again later");
+                        showAlertDialog("Error occurred", "Something went wrong. Try again later.(auth error)");
                     }
                 });
     }
 
-    private void showOrHide(boolean show){
-        binding.pbSignIn.setVisibility(show ? View.VISIBLE : View.GONE);
-        isProgressShowing = show;
-    }
-
     private void checkUserExistence(){
         if(mAuth == null){
-            showOrHide(false);
-            showAlertDialog("Error occurred","Something went wrong. Retry later");
             showMessageInTV(null);
+            dismissMainDialog();
+            showAlertDialog("Error occurred","Something went wrong. Retry later");
             return;
         }
 
         FirebaseUser user = mAuth.getCurrentUser();
         if(user == null){
-            showOrHide(false);
             showMessageInTV(null);
+            dismissMainDialog();
             showAlertDialog("Error occurred","Failed to generate id. Retry later");
             return;
         }
 
         final String uid = user.getUid();
-        final String name = user.getDisplayName();
 
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()){
-                    isDoctor = snapshot.child("isDoctor").getValue(Boolean.class);
-                    continueToHomepage(isDoctor, uid);
+                    final Boolean isDoctor = snapshot.child("is_doctor").getValue(Boolean.class);
+                    if(isDoctor == null){
+                        showAlertDialog("Error occurred", "Unknown error occurred. Contact your developer");
+                        dismissMainDialog();
+                        return;
+                    }
+
+                    final User curUser;
+                    if(isDoctor) curUser =  snapshot.getValue(Doctor.class);
+                    else curUser = snapshot.getValue(Patient.class);
+
+                    continueToHomepage(isDoctor, curUser);
                 }
                 else{
+                    dismissMainDialog();
                     openAddInfoPage(isDoctor);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                showOrHide(false);
+                dismissMainDialog();
                 showAlertDialog("Error occurred",error.getMessage());
             }
         });
@@ -204,48 +196,19 @@ public class CreateAccount extends AppCompatActivity {
         final Intent intent = new Intent(this, (amIDoctor ? DoctorProfile.class : PatientProfile.class));
         intent.putExtra("from_login_page",true);
         startActivity(intent);
-
-//        HashMap<String,Object> map = new HashMap<>();
-//        map.put("name",name);
-//        map.put("isDoctor",isDoctor);
-//
-//        int rand = new Random().nextInt(99999);
-//        map.put("id",rand);
-//
-//        ref.updateChildren(map).addOnCompleteListener(task -> {
-//            if(task.isSuccessful()){
-//                continueToHomepage(isDoctor,rand,false);
-//            }
-//            else{
-//                showOrHide(false);
-//                showMessageInTV(null);
-//                Exception exception = task.getException();
-//                String message = (exception == null) ? "Something went wrong" : exception.getMessage();
-//                showAlertDialog("Error occurred",message);
-//            }
-//        });
     }
 
-    private void continueToHomepage(Boolean isDoctor, String uid){
-        if(isDoctor == null){
-            showAlertDialog("Error occurred",getString(R.string.something_went_wrong));
-            return;
-        }
-
+    private void continueToHomepage(boolean isDoctor, User myProfile){
         if(this.isDoctor != isDoctor){
             showSafeToast("Login into your existing account...");
         }
 
         getSp().saveIsSignedIn(true);
-        getSp().saveAmIDoctor(isDoctor);
-        getSp().saveMyUid(uid);
+        getSp().saveMyProfile(myProfile);
         showSafeToast("Signed in successfully");
 
-        Intent intent = new Intent(this, HomePage.class);
-
-        getSp().saveWasMyInfoAdded(true);
-
-        intent.putExtra("is_doctor", sp.amIDoctor());
+        dismissMainDialog();
+        final Intent intent = new Intent(this, HomePage.class);
         intent.putExtra("force_exit",true);
         startActivity(intent);
     }
@@ -277,9 +240,7 @@ public class CreateAccount extends AppCompatActivity {
             return;
         }
 
-        Intent intent = client.getSignInIntent();
-
-        //showMessageInTV("Please wait...");
+        final Intent intent = client.getSignInIntent();
         mGetContent.launch(intent);
     }
 
@@ -308,7 +269,7 @@ public class CreateAccount extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(isProgressShowing){
+        if(mainDialog != null){
             showSafeToast("Please wait. Login in progress...");
             return;
         }
@@ -332,7 +293,10 @@ public class CreateAccount extends AppCompatActivity {
         mainDialog.show();
     }
     private void dismissMainDialog(){
-        try { mainDialog.dismiss(); }catch (Exception ignored){}
+        try {
+            mainDialog.dismiss();
+            mainDialog = null;
+        }catch (Exception ignored){}
     }
 
 }
