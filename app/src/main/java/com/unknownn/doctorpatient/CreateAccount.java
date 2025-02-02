@@ -164,7 +164,7 @@ public class CreateAccount extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()){
-                    final Boolean isDoctor = snapshot.child("is_doctor").getValue(Boolean.class);
+                    final Boolean isDoctor = snapshot.child("amIDoctor").getValue(Boolean.class);
                     if(isDoctor == null){
                         showAlertDialog("Error occurred", "Unknown error occurred. Contact your developer");
                         dismissMainDialog();

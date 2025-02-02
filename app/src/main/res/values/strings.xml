@@ -53,4 +53,6 @@
     <string name="extra_info">Extra info</string>
     <string name="successful">Successful</string>
     <string name="info_icon">Info icon</string>
+    <string name="speciality_area">Speciality Area</string>
+    <string name="years_of_practice">Years of practice</string>
 </resources>

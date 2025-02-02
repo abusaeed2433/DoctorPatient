@@ -85,7 +85,7 @@ public class PatientProfile extends AppCompatActivity {
 
             final User oldUser = new SharedPref(PatientProfile.this).getMyProfile();
             final Patient patient = new Patient(
-                    oldUser.getUid(),
+                    null,
                     (oldUser.getIntId() == -1) ? getUniqueID() : oldUser.getIntId(),
                     name,
                     Integer.parseInt(age),
@@ -148,6 +148,7 @@ public class PatientProfile extends AppCompatActivity {
         }
 
         showProgress();
+        patient.setUid(user.getUid());
 
         final StorageReference ref = FirebaseStorage.getInstance().getReference()
                 .child("profile").child(patient.getUid()).child("profile_pic.jpg");

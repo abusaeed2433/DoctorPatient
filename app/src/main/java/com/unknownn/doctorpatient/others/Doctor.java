@@ -14,8 +14,8 @@ public class Doctor extends User{
         super();
     }
 
-    public Doctor(String uid, int intId, String name, String imageUrl, String speciality, int experienceInMonth) {
-        super(uid,intId,name,imageUrl,true);
+    public Doctor(String uid, int intId, String name, String gender, String imageUrl, String speciality, int experienceInMonth) {
+        super(uid,intId,name,imageUrl,true, gender);
         this.speciality = speciality;
         this.experienceInMonth = experienceInMonth;
     }

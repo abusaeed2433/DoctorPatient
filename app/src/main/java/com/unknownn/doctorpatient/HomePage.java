@@ -43,6 +43,7 @@ import com.unknownn.doctorpatient.others.Doctor;
 import com.unknownn.doctorpatient.others.Patient;
 import com.unknownn.doctorpatient.others.SharedPref;
 import com.unknownn.doctorpatient.others.SnapListener;
+import com.unknownn.doctorpatient.others.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,6 +79,7 @@ public class HomePage extends AppCompatActivity implements SnapListener {
         binding = ActivityHomepageBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        //User user = getSp().getMyProfile();
         amIDoctor = getSp().amIDoctor();
         forceExit = getIntent().getBooleanExtra("force_exit",false);
 
@@ -243,17 +245,11 @@ public class HomePage extends AppCompatActivity implements SnapListener {
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.action_bar_menu, menu);
-        if(amIDoctor){
-            menu.getItem(0).setVisible(false);
-        }
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if(amIDoctor){
-            menu.getItem(0).setVisible(false);
-        }
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -262,14 +258,9 @@ public class HomePage extends AppCompatActivity implements SnapListener {
         int id = item.getItemId();
 
         if(id == R.id.bar_profile){
-            if(amIDoctor){
-                showSafeToast("Profile is only for patient");
-            }
-            else{
-                Intent intent = new Intent(HomePage.this,PatientProfile.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            }
+            Intent intent = new Intent(HomePage.this, (amIDoctor ? DoctorProfile.class : PatientProfile.class) );
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }
         else if(id == R.id.log_out){
             try {
@@ -286,6 +277,7 @@ public class HomePage extends AppCompatActivity implements SnapListener {
 
     private void logOutUser(){
         getSp().saveIsSignedIn(false);
+        getSp().clearAll();
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))

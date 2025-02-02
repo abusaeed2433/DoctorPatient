@@ -21,7 +21,9 @@
 
         <activity
             android:name=".DoctorProfile"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".HomePage"/>
+
         <activity
             android:name=".PatientProfile"
             android:exported="false"

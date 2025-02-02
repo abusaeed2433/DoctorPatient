@@ -9,18 +9,12 @@ import android.text.style.StyleSpan;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Patient extends User{
     @PropertyName("age")
     private int age;
 
     @PropertyName("weight")
     private int weight;
-
-    @PropertyName("gender")
-    private String gender;
 
     @PropertyName("height_ft")
     private int heightFt;
@@ -35,29 +29,19 @@ public class Patient extends User{
         super();
         this.age = 0;
         this.weight = 0;
-        this.gender = "";
         this.heightFt = 0;
         this.heightIn = 0;
         this.desc = "";
     }
 
     public Patient(String uid, int intId, String name, int age, int weight, String gender, int heightFt, int heightIn, String desc, String imageUrl) {
-        super(uid,intId,name,imageUrl,false);
+        super(uid,intId,name,imageUrl,false,gender);
 
         this.age = age;
         this.weight = weight;
-        this.gender = gender;
         this.heightFt = heightFt;
         this.heightIn = heightIn;
         this.desc = desc;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
     }
 
     public int getHeightFt() {
@@ -132,7 +116,7 @@ public class Patient extends User{
             ans.append(" is calling you. ");
             prev = ans.length();
 
-            if (gender.equalsIgnoreCase("female")) ans.append("Her ");
+            if (super.getGender().equalsIgnoreCase("female")) ans.append("Her ");
             else ans.append("His ");
 
             pairs[5] = new MyPair(prev, ans.length());
@@ -157,7 +141,7 @@ public class Patient extends User{
             ans.append(" "+heightIn).append("in");
             ans.append(" is calling you. ");
 
-            if (gender.equalsIgnoreCase("female")) ans.append("Her ");
+            if (super.getGender().equalsIgnoreCase("female")) ans.append("Her ");
             else ans.append("His ");
             ans.append("disease info is given below:\n");
 

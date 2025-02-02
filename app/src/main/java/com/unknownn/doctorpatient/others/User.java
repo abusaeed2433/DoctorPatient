@@ -12,17 +12,29 @@ public class User {
     @PropertyName("image_url")
     private String imageUrl;
     @PropertyName("is_doctor")
-    private boolean isDoctor;
+    private boolean amIDoctor;
+
+    @PropertyName("gender")
+    private String gender;
 
     public User() {
     }
 
-    public User(String uid, int intId, String name, String imageUrl, boolean isDoctor) {
+    public User(String uid, int intId, String name, String imageUrl, boolean amIDoctor, String gender) {
         this.uid = uid;
         this.intId = intId;
         this.name = name;
         this.imageUrl = imageUrl;
-        this.isDoctor = isDoctor;
+        this.amIDoctor = amIDoctor;
+        this.gender = gender;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getUid() {
@@ -57,11 +69,11 @@ public class User {
         this.imageUrl = imageUrl;
     }
 
-    public boolean isDoctor() {
-        return isDoctor;
+    public boolean isAmIDoctor() {
+        return amIDoctor;
     }
 
-    public void setDoctor(boolean doctor) {
-        isDoctor = doctor;
+    public void setAmIDoctor(boolean doctor) {
+        amIDoctor = doctor;
     }
 }
