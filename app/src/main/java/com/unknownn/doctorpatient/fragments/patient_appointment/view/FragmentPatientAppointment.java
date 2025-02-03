@@ -14,16 +14,12 @@ import android.view.ViewGroup;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.unknownn.doctorpatient.R;
-import com.unknownn.doctorpatient.databinding.ActivityDoctorProfileBinding;
 import com.unknownn.doctorpatient.databinding.FragmentAppointmentBinding;
 import com.unknownn.doctorpatient.homepage_doctor.model.Appointment;
 import com.unknownn.doctorpatient.homepage_doctor.view.AppointmentAdapter;
-import com.unknownn.doctorpatient.others.ItemClickListener;
 import com.unknownn.doctorpatient.others.SharedPref;
 
 import java.util.ArrayList;
@@ -47,7 +43,7 @@ public class FragmentPatientAppointment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         startAdapter();
-        readAppointment();
+        downloadAppointments();
     }
 
     private void startAdapter(){
@@ -71,21 +67,21 @@ public class FragmentPatientAppointment extends Fragment {
     }
 
     private void openDetailsPage(Appointment item){
-        
+
     }
 
     private void updateAdapter(List<Appointment> list){
         if(list.isEmpty()){
             binding.tvNotFound.setVisibility(View.VISIBLE);
-            return;
         }
-
-        binding.tvNotFound.setVisibility(View.INVISIBLE);
+        else{
+            binding.tvNotFound.setVisibility(View.INVISIBLE);
+        }
 
         appointmentAdapter.submitList(list);
     }
 
-    private void readAppointment(){
+    private void downloadAppointments(){
         final Activity activity = getActivity();
         if(activity == null) return;
 

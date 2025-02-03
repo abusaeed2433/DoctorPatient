@@ -7,18 +7,55 @@
     tools:context=".homepage_doctor.view.DoctorHomePage"
     android:id="@+id/cl_homepage" >
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:background="@drawable/just_stroke_only"
+        android:padding="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tvMyAppointments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/my_appointments"
+            android:textColor="@color/blueish"
+            android:textSize="20sp"
+            app:layout_constraintHorizontal_bias="0"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/spinnerAppointmentType"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Spinner
+            android:id="@+id/spinnerAppointmentType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:padding="4dp"
+            android:spinnerMode="dropdown"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <ProgressBar
         android:id="@+id/pb_homepage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:elevation="1dp"
-        app:layout_constraintVertical_bias=".95"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        app:layout_constraintBottom_toTopOf="@+id/tv_message"
+        android:elevation="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias=".1" />
 
     <TextView
         android:id="@+id/tv_message"
@@ -36,24 +73,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Loading doctors list..." />
-
+        app:layout_constraintVertical_bias="0.1"
+        tools:text="Loading appointment list..." />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:orientation="vertical"
         android:elevation="0dp"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="3"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout6"
         app:reverseLayout="false"
-        tools:itemCount="7"
-        tools:listitem="@layout/each_doctor_layout" />
+        tools:itemCount="3"
+        tools:listitem="@layout/each_appointment" />
 
     <Button
         android:id="@+id/button_exit"

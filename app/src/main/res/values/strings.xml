@@ -17,12 +17,13 @@
     <string name="restart_app">Restart app</string>
     <string name="failed_to_fetch_data">Failed to fetch your details</string>
     <string name="no_doctor_av">No doctor available</string>
-    <string name="notify_message">You are now online. As soon as someone contact you, you will be notified</string>
+    <string name="notify_message">You are now online. You can now join your appointment(if any).</string>
     <string name="exit">Exit</string>
     <string name="you_are_not_signed_in">You are not signed in</string>
     <string name="processing_request">Processing request…</string>
     <string name="ph_is_calling">%1$s is calling…</string>
     <string name="ph_only">%1$d</string>
+    <string name="ph_string_only">%1$s</string>
     <string name="not_available">Not available</string>
     <string name="please_wait">Please wait</string>
     <string name="your_message">Your message</string>
@@ -72,4 +73,5 @@
     <string name="go_back">Go back</string>
     <string name="find_your_doctor">Find your doctor</string>
     <string name="no_appointment">No appointment</string>
+    <string name="my_appointments">My appointments</string>
 </resources>

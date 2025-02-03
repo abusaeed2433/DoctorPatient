@@ -4,10 +4,11 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
-public class Appointment {
+public class Appointment implements Comparable<Appointment>{
     // common
     @PropertyName("appointment_id") // doctorId_patientId_date_time
     private String appointmentId;
@@ -36,10 +37,13 @@ public class Appointment {
     @PropertyName("patient_image")
     private String patientImage;
 
+    @PropertyName("is_confirmed")
+    private boolean isConfirmed;
+
     public Appointment() {
     }
 
-    public Appointment(String appointmentId, String date, String time, String doctorUid, String doctorName, String doctorSpeciality, String doctorImage, String patientUid, String patientName, String patientDescription, String patientImage) {
+    public Appointment(String appointmentId, String date, String time, String doctorUid, String doctorName, String doctorSpeciality, String doctorImage, String patientUid, String patientName, String patientDescription, String patientImage, boolean isConfirmed) {
         this.appointmentId = appointmentId;
         this.date = date;
         this.time = time;
@@ -51,6 +55,15 @@ public class Appointment {
         this.patientName = patientName;
         this.patientDescription = patientDescription;
         this.patientImage = patientImage;
+        this.isConfirmed = isConfirmed;
+    }
+
+    public boolean isConfirmed() {
+        return isConfirmed;
+    }
+
+    public void setConfirmed(boolean confirmed) {
+        isConfirmed = confirmed;
     }
 
     public String getAppointmentId() {
@@ -141,8 +154,10 @@ public class Appointment {
         this.patientImage = patientImage;
     }
 
-    private String dateDD = null;
-    private String dateMmDayName = null;
+    private transient String dateDD = null;
+    private transient String dateMmDayName = null;
+
+    private transient long timestamp = 0L;
     @Exclude
     public String getDayDD(){
         if(dateDD != null) return dateDD;
@@ -159,10 +174,17 @@ public class Appointment {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM, E");
                 dateMmDayName = formatter.format(localDate);
             }
+            {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mma");
+                LocalDateTime ldt = LocalDateTime.from( formatter.parse( date+" "+time ) );
+                timestamp = ldt.toEpochSecond(ZoneOffset.UTC);
+            }
 
         }catch (Exception ignored){}
         return dateDD;
     }
+
+
 
     @Exclude
     public String getDateMmDayName(){
@@ -182,4 +204,8 @@ public class Appointment {
         }
     }
 
+    @Override
+    public int compareTo(Appointment o) {
+        return Long.compare(timestamp, o.timestamp);
+    }
 }
