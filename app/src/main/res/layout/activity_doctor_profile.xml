@@ -15,10 +15,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/constraintLayout2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:padding="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -30,7 +31,7 @@
                 android:id="@+id/imageViewProfile"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
                 android:elevation="1dp"
                 android:padding="8dp"
                 android:scaleType="centerCrop"
@@ -138,6 +139,41 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical"
+                android:background="@drawable/just_stroke_only">
+
+                <TextView
+                    android:id="@+id/tvSpecialities"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/just_stroke_only"
+                    android:text="@string/all"
+                    android:textColor="@color/text_color"
+                    android:padding="8dp"
+                    android:textSize="@dimen/text_size"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvSpeciality"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:spanCount="3"
+                    tools:itemCount="9"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView4"
+                    app:reverseLayout="false"
+                    tools:listitem="@layout/each_speciality_design" />
+
+            </LinearLayout>
+
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/editTextStyle2"
                 android:layout_width="match_parent"
@@ -148,16 +184,16 @@
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextSpeciality"
+                    android:id="@+id/editTextDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/speciality_area"
+                    android:hint="@string/about_yourself"
                     android:textColor="@color/text_color"
                     android:textSize="16sp"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
     </ScrollView>
 

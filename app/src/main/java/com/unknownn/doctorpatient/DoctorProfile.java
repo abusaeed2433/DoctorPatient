@@ -15,6 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexWrap;
+import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,6 +30,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.unknownn.doctorpatient.databinding.ActivityDoctorProfileBinding;
+import com.unknownn.doctorpatient.enums.Speciality;
+import com.unknownn.doctorpatient.fragments.patient_home.view.SpecialityAdapter;
 import com.unknownn.doctorpatient.homepage_doctor.view.DoctorHomePage;
 import com.unknownn.doctorpatient.others.Doctor;
 import com.unknownn.doctorpatient.others.MyPopUp;
@@ -36,17 +41,22 @@ import com.unknownn.doctorpatient.others.User;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class DoctorProfile extends AppCompatActivity {
     private boolean isMale = true, isProcessing = false;
     private Toast mToast = null;
     private SharedPref sp = null;
-
-    private ActivityDoctorProfileBinding binding = null;
     private boolean isFromLoginPage = false;
     private Dialog mainDialog = null;
     private Uri photoUri = null;
     private ActivityResultLauncher<String> mGetContent;
+    private final Set<Speciality> selectedSpecialities = new TreeSet<>();
+
+    private ActivityDoctorProfileBinding binding = null;
+
+    private SpecialityAdapter specialityAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +68,7 @@ public class DoctorProfile extends AppCompatActivity {
 
         initializeCallBack();
         setClickListener();
+        showSpecialityList();
         loadFromDatabase();
     }
 
@@ -68,12 +79,14 @@ public class DoctorProfile extends AppCompatActivity {
             isProcessing = true;
             final String name = String.valueOf(binding.editTextName.getText());
             final String yearsOfPractice = String.valueOf(binding.editTextExperience.getText());
-            final String speciality = String.valueOf(binding.editTextSpeciality.getText());
+            final String description = String.valueOf(binding.editTextDescription.getText());
+            final String speciality = String.valueOf(binding.tvSpecialities.getText());
             final String gender = isMale ? "Male" : "Female";
 
-            for(String str : List.of(name, yearsOfPractice, speciality, gender) ){
+            for(String str : List.of(name, yearsOfPractice, description, speciality, gender) ){
                 if( isTextInValid(str) ){
                     showSafeToast("Fill all the form");
+                    isProcessing = false;
                     return;
                 }
             }
@@ -85,9 +98,9 @@ public class DoctorProfile extends AppCompatActivity {
                     name,
                     gender,
                     null,
-                    null, // make speciality into description, and recyclerview for speciality
+                    description,
                     Integer.parseInt(yearsOfPractice),
-                    speciality // todo update this
+                    speciality
             );
 
             saveToStorageAndDatabase(doctor);
@@ -237,6 +250,39 @@ public class DoctorProfile extends AppCompatActivity {
         return sp;
     }
 
+    private void showSpecialityList(){
+        specialityAdapter = new SpecialityAdapter(this, (speciality, removed) -> {
+            if(removed){
+                selectedSpecialities.remove(speciality);
+            }
+            else{
+                selectedSpecialities.add(speciality);
+            }
+
+            binding.tvSpecialities.setText( format(selectedSpecialities) );
+        });
+
+        FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(this);
+        layoutManager.setFlexDirection(FlexDirection.ROW);
+        layoutManager.setFlexWrap(FlexWrap.WRAP);
+        binding.rvSpeciality.setLayoutManager(layoutManager);
+
+        selectedSpecialities.add(Speciality.ALL);
+        binding.rvSpeciality.setAdapter(specialityAdapter);
+        specialityAdapter.submitList(Speciality.getAll());
+    }
+
+    private StringBuilder format(Set<Speciality> specialities){
+        final StringBuilder builder = new StringBuilder();
+        for(Speciality sp : specialities){
+            builder.append(sp.category).append(',');
+        }
+        if(builder.length() > 0) {
+            builder.deleteCharAt(builder.length()-1);
+        }
+        return builder;
+    }
+
     private void processData(Doctor doctor){
         if(doctor == null) return;
         if(binding == null) return;
@@ -244,7 +290,13 @@ public class DoctorProfile extends AppCompatActivity {
         getSp().saveMyProfile(doctor);
         binding.editTextName.setText(doctor.getName());
         binding.editTextExperience.setText( getString(R.string.ph_only,doctor.getExperienceInMonth()) );
-        binding.editTextSpeciality.setText( doctor.getDescription() ); // todo
+        binding.editTextDescription.setText( doctor.getDescription() );
+
+        List<Speciality> list = doctor.getAllSpecialities();
+        selectedSpecialities.clear();
+        selectedSpecialities.addAll(list);
+        binding.tvSpecialities.setText( format(selectedSpecialities) );
+        specialityAdapter.updateSpecialities(list);
 
         if(doctor.getGender().equalsIgnoreCase("female")){
             binding.radioButtonFemale.setChecked(true);
@@ -306,6 +358,7 @@ public class DoctorProfile extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onBackPressed() {
         super.onBackPressed();

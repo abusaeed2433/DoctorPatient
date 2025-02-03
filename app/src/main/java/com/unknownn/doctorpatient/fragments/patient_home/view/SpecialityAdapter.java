@@ -1,5 +1,6 @@
 package com.unknownn.doctorpatient.fragments.patient_home.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import com.unknownn.doctorpatient.R;
 import com.unknownn.doctorpatient.databinding.EachSpecialityDesignBinding;
 import com.unknownn.doctorpatient.enums.Speciality;
 
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -25,13 +27,13 @@ public class SpecialityAdapter extends ListAdapter<Speciality, SpecialityAdapter
     private Speciality curItem;
 
     private final ItemClickListener clickListener;
-    private final Set<Integer> selectedPositions = new TreeSet<>();
+    private final Set<Speciality> selectedSpecialities = new TreeSet<>();
 
-    protected SpecialityAdapter(Context mContext, ItemClickListener clickListener) {
+    public SpecialityAdapter(Context mContext, ItemClickListener clickListener) {
         super(diffCallback);
         this.mContext = mContext;
         this.clickListener = clickListener;
-        selectedPositions.add(0);
+        selectedSpecialities.add(Speciality.ALL);
     }
 
     private static final DiffUtil.ItemCallback<Speciality> diffCallback = new DiffUtil.ItemCallback<Speciality>() {
@@ -64,7 +66,7 @@ public class SpecialityAdapter extends ListAdapter<Speciality, SpecialityAdapter
                 .into(holder.binding.specialtyIcon);
         holder.binding.specialtyText.setText(curItem.category);
 
-        if(selectedPositions.contains(position)){
+        if(selectedSpecialities.contains(curItem)){
             holder.binding.llHolder.setBackgroundResource(R.drawable.selected_speciality);
         }
         else{
@@ -74,19 +76,26 @@ public class SpecialityAdapter extends ListAdapter<Speciality, SpecialityAdapter
         holder.itemView.setOnClickListener(v -> {
            final int curPosition = holder.getAdapterPosition();
 
-           final boolean removed = selectedPositions.contains(curPosition);
+           final boolean removed = selectedSpecialities.contains(getItem(curPosition));
 
            if(removed){
-               selectedPositions.remove(curPosition);
+               selectedSpecialities.remove(getItem(curPosition));
            }
            else{
-               selectedPositions.add(curPosition);
+               selectedSpecialities.add(getItem(curPosition));
            }
 
            notifyItemChanged(curPosition);
             Log.d("Speciality item clicked", "onBindViewHolder: "+curPosition);
            clickListener.onItemClicked(getItem(curPosition), removed);
         });
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void updateSpecialities(List<Speciality> specialities){
+        selectedSpecialities.clear();
+        selectedSpecialities.addAll(specialities);
+        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{

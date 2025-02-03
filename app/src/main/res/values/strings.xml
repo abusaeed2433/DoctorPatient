@@ -74,4 +74,6 @@
     <string name="find_your_doctor">Find your doctor</string>
     <string name="no_appointment">No appointment</string>
     <string name="my_appointments">My appointments</string>
+    <string name="about_yourself">About yourself</string>
+    <string name="all">All</string>
 </resources>

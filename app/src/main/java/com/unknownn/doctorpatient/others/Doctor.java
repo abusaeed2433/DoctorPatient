@@ -1,5 +1,7 @@
 package com.unknownn.doctorpatient.others;
 
+import android.util.Log;
+
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 import com.unknownn.doctorpatient.enums.Speciality;
@@ -75,13 +77,15 @@ public class Doctor extends User implements Serializable {
 
     @Exclude
     public List<Speciality> getAllSpecialities(){
-        String[] words = specialities.split("[\\s+,]");
+        String[] words = specialities.split("[\\s,]+");
         final List<Speciality> list = new ArrayList<>();
 
         for(String word : words){
             try{
-                list.add( Speciality.valueOf(word.toLowerCase()) );
-            }catch (Exception ignored){}
+                list.add( Speciality.valueOf(word.toUpperCase()) );
+            }catch (Exception e){
+                Log.d("Error", "getAllSpecialities: "+e.getMessage());
+            }
         }
         return list;
     }
