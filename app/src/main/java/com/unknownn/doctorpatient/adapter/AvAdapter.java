@@ -20,12 +20,12 @@ import com.unknownn.doctorpatient.others.ItemClickListener;
 
 public class AvAdapter extends ListAdapter<Doctor, AvAdapter.ViewHolder> {
 
-    private final ItemClickListener listener;
+    private final ItemClickListener<Doctor> listener;
     private final Context mContext;
 
     private Doctor curDoctor;
 
-    public AvAdapter(Context mContext, ItemClickListener listener) {
+    public AvAdapter(Context mContext, ItemClickListener<Doctor> listener) {
         super(callBack);
         this.mContext = mContext;
         this.listener = listener;

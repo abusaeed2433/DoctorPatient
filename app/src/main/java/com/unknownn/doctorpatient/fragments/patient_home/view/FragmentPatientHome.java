@@ -79,14 +79,16 @@ public class FragmentPatientHome extends Fragment {
     }
 
     private void startAdapter(){
-        doctorAdapter = new AvAdapter(getActivity(), doctor -> {
-            //openDoctorDetailsPage(doctor);
-        });
+        doctorAdapter = new AvAdapter(getActivity(), this::openDoctorDetailsPage);
 
         final boolean isLarge = getResources().getBoolean(R.bool.isLargeDevice);
         final int count = (isLarge) ? 3 : 2;
         binding.rvDoctors.setLayoutManager( new GridLayoutManager(getActivity(), count, RecyclerView.VERTICAL, false));
         binding.rvDoctors.setAdapter(doctorAdapter);
+    }
+
+    private void openDoctorDetailsPage(Doctor doctor){
+
     }
 
     private List<Doctor> filterList(List<Doctor> doctors){
