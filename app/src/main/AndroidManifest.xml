@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -19,8 +23,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DoctorPatient">
         <activity
+            android:name=".book_appointment.view.BookAppointmentActivity"
+            android:exported="false"
+            android:parentActivityName=".homepage_patient.view.PatientHomePage"/>
+        <activity
             android:name=".appointment_details.AppointmentDetailsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".homepage_patient.view.PatientHomePage"/>
         <activity
             android:name=".DoctorProfile"
             android:exported="false"

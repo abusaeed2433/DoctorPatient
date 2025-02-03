@@ -25,6 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.unknownn.doctorpatient.R;
 import com.unknownn.doctorpatient.adapter.AvAdapter;
 import com.unknownn.doctorpatient.appointment_details.AppointmentDetailsActivity;
+import com.unknownn.doctorpatient.book_appointment.view.BookAppointmentActivity;
 import com.unknownn.doctorpatient.databinding.ActivityPatientHomepageBinding;
 import com.unknownn.doctorpatient.databinding.FragmentHomeBinding;
 import com.unknownn.doctorpatient.enums.Speciality;
@@ -152,7 +153,13 @@ public class FragmentPatientHome extends Fragment {
     }
 
     private void openDoctorDetailsPage(Doctor doctor){
+        Activity activity = getActivity();
+        if(activity == null) return;
 
+        Intent intent = new Intent(activity, BookAppointmentActivity.class);
+        intent.putExtra("doctor", doctor);
+        startActivity(intent);
+        activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     private List<Doctor> filterList(List<Doctor> doctors){

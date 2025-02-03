@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/clHolder"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="80dp"
+    android:layout_height="80dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/shadow_up_back"
+    android:layout_margin="4dp">
+
+    <TextView
+        android:id="@+id/tvText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:text="24\nMON"
+        android:textSize="@dimen/text_size_small"
+        android:textColor="@color/text_color"
+        android:gravity="center"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,12 +1,10 @@
 package com.unknownn.doctorpatient.others;
 
-import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.Serializable;
 
-public class User {
+public class User implements Serializable {
     @PropertyName("uid")
     private String uid;
     @PropertyName("int_id")

@@ -1,6 +1,7 @@
 package com.unknownn.doctorpatient.appointment_details;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -116,4 +117,21 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
         snackbar.show();
     }
 
+    @SuppressWarnings("deprecation")
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            super.onBackPressed();
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
+    // todo add button for join call in appointment details page
 }

@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class Appointment implements Comparable<Appointment>, Serializable {
     // common
@@ -206,15 +207,19 @@ public class Appointment implements Comparable<Appointment>, Serializable {
         if( !time.equals(item.time) || !date.equals(item.date)) return false;
 
         if(showDoctorData){
-            return doctorName.equals(item.doctorName) && doctorSpeciality.equals(item.doctorSpeciality) && doctorImage.equals(item.doctorImage);
+            return Objects.equals(doctorName,item.doctorName) &&
+                    Objects.equals(doctorSpeciality,item.doctorSpeciality) &&
+                    Objects.equals(doctorImage,item.doctorImage);
         }
         else {
-            return patientName.equals(item.patientName) && patientDescription.equals(item.patientDescription) && patientImage.equals(item.patientImage);
+            return Objects.equals(patientName,item.patientName) &&
+                    Objects.equals(patientDescription,item.patientDescription) &&
+                    Objects.equals(patientImage,item.patientImage);
         }
     }
 
     @Override
     public int compareTo(Appointment o) {
-        return Long.compare(timestamp, o.timestamp);
+        return Long.compare(getTimestamp(), o.getTimestamp());
     }
 }

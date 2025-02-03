@@ -32,6 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.unknownn.doctorpatient.CreateAccount;
 import com.unknownn.doctorpatient.DoctorProfile;
 import com.unknownn.doctorpatient.R;
+import com.unknownn.doctorpatient.appointment_details.AppointmentDetailsActivity;
 import com.unknownn.doctorpatient.databinding.ActivityHomepageBinding;
 import com.unknownn.doctorpatient.homepage_doctor.model.Appointment;
 import com.unknownn.doctorpatient.others.Doctor;
@@ -180,7 +181,10 @@ public class DoctorHomePage extends AppCompatActivity {
     }
 
     private void openDetailsPage(Appointment item){
-
+        Intent intent = new Intent(this, AppointmentDetailsActivity.class);
+        intent.putExtra("appointment",item);
+        startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     @Override

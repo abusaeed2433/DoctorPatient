@@ -2,6 +2,7 @@ package com.unknownn.doctorpatient.fragments.patient_appointment.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.unknownn.doctorpatient.appointment_details.AppointmentDetailsActivity;
 import com.unknownn.doctorpatient.databinding.FragmentAppointmentBinding;
 import com.unknownn.doctorpatient.homepage_doctor.model.Appointment;
 import com.unknownn.doctorpatient.homepage_doctor.view.AppointmentAdapter;
@@ -73,7 +75,13 @@ public class FragmentPatientAppointment extends Fragment {
     }
 
     private void openDetailsPage(Appointment item){
+        final Activity activity = getActivity();
+        if(activity == null) return;
 
+        Intent intent = new Intent(activity, AppointmentDetailsActivity.class);
+        intent.putExtra("appointment",item);
+        startActivity(intent);
+        activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     private void updateAdapter(List<Appointment> list){

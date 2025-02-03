@@ -80,4 +80,5 @@
     <string name="about_the_patient">About the patient</string>
     <string name="delete">Delete</string>
     <string name="accept">Accept</string>
+    <string name="book_now">Book Now</string>
 </resources>
