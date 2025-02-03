@@ -69,4 +69,7 @@
     <string name="see_all">See all</string>
     <string name="no_appointment_right_now">No appointment right now</string>
     <string name="no_doctor_found">No doctor found</string>
+    <string name="go_back">Go back</string>
+    <string name="find_your_doctor">Find your doctor</string>
+    <string name="no_appointment">No appointment</string>
 </resources>

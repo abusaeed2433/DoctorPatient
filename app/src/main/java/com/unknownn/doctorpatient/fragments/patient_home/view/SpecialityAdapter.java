@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.unknownn.doctorpatient.R;
 import com.unknownn.doctorpatient.databinding.EachSpecialityDesignBinding;
-import com.unknownn.doctorpatient.fragments.patient_home.model.Speciality;
+import com.unknownn.doctorpatient.enums.Speciality;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -37,12 +37,12 @@ public class SpecialityAdapter extends ListAdapter<Speciality, SpecialityAdapter
     private static final DiffUtil.ItemCallback<Speciality> diffCallback = new DiffUtil.ItemCallback<Speciality>() {
         @Override
         public boolean areItemsTheSame(@NonNull Speciality oldItem, @NonNull Speciality newItem) {
-            return oldItem.getName().equals(newItem.getName());
+            return oldItem.equals(newItem);
         }
 
         @Override
         public boolean areContentsTheSame(@NonNull Speciality oldItem, @NonNull Speciality newItem) {
-            return oldItem.getName().equals(newItem.getName()) && oldItem.getImageUrl().equals(newItem.getImageUrl());
+            return oldItem.equals(newItem);
         }
     };
 
@@ -58,11 +58,11 @@ public class SpecialityAdapter extends ListAdapter<Speciality, SpecialityAdapter
         curItem = getItem(position);
 
         Glide.with(mContext)
-                .load(curItem.getImageUrl())
+                .load(curItem.imageUrl)
                 .timeout(30*1000)
                 .placeholder(R.drawable.medicine)
                 .into(holder.binding.specialtyIcon);
-        holder.binding.specialtyText.setText(curItem.getName());
+        holder.binding.specialtyText.setText(curItem.category);
 
         if(selectedPositions.contains(position)){
             holder.binding.llHolder.setBackgroundResource(R.drawable.selected_speciality);

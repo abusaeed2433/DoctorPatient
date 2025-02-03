@@ -49,16 +49,13 @@ import java.util.List;
 
 public class PatientHomePage extends AppCompatActivity {
 
-    public static final int UPDATE_TIME_INTERVAL_MAX = 12000;
-    private AvAdapter adapter;
-
     private boolean forceExit = false, hasDoublePressed = false, hasClickedOne = false;
     private SharedPref sp;
     private Dialog mainDialog;
     private TextView tvProgress;
     private String appId = null, token = null, cName = null;
-    private ActivityPatientHomepageBinding binding = null;
     private int selectedPage = 0;
+    private ActivityPatientHomepageBinding binding = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -359,14 +356,21 @@ public class PatientHomePage extends AppCompatActivity {
             }
         }
         else{
-            showSnackBar("Press again to exit");
-            hasDoublePressed = true;
-            new Handler(Looper.getMainLooper()).postDelayed(() -> hasDoublePressed = false,2000);
+            if(selectedPage != 0){
+                binding.viewPager.setCurrentItem(0);
+                binding.bnv.setSelectedItemId(R.id.navHome);
+                selectedPage = 0;
+            }
+            else {
+                showSnackBar("Press again to exit");
+                hasDoublePressed = true;
+                new Handler(Looper.getMainLooper()).postDelayed(() -> hasDoublePressed = false, 2000);
+            }
         }
     }
 
     private void showSnackBar(String message){
-        Snackbar snackbar = Snackbar.make(findViewById(R.id.cl_homepage),message,Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(binding.relativeLayoutHomepage,message,Snackbar.LENGTH_LONG);
         snackbar.show();
     }
 

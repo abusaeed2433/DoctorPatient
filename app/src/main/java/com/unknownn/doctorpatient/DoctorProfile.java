@@ -85,8 +85,9 @@ public class DoctorProfile extends AppCompatActivity {
                     name,
                     gender,
                     null,
-                    speciality,
-                    Integer.parseInt(yearsOfPractice)
+                    null, // make speciality into description, and recyclerview for speciality
+                    Integer.parseInt(yearsOfPractice),
+                    speciality // todo update this
             );
 
             saveToStorageAndDatabase(doctor);
@@ -243,7 +244,7 @@ public class DoctorProfile extends AppCompatActivity {
         getSp().saveMyProfile(doctor);
         binding.editTextName.setText(doctor.getName());
         binding.editTextExperience.setText( getString(R.string.ph_only,doctor.getExperienceInMonth()) );
-        binding.editTextSpeciality.setText( doctor.getSpeciality() );
+        binding.editTextSpeciality.setText( doctor.getDescription() ); // todo
 
         if(doctor.getGender().equalsIgnoreCase("female")){
             binding.radioButtonFemale.setChecked(true);

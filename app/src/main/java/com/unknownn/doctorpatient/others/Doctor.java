@@ -2,24 +2,30 @@ package com.unknownn.doctorpatient.others;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
+import com.unknownn.doctorpatient.enums.Speciality;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
-public class Doctor extends User{
-    @PropertyName("speciality")
-    private String speciality;
+public class Doctor extends User implements Serializable {
+    @PropertyName("description")
+    private String description;
     @PropertyName("experience_in_month")
     private int experienceInMonth;
+    @PropertyName("specialities")
+    private String specialities;
 
     public Doctor() {
         super();
     }
 
-    public Doctor(String uid, int intId, String name, String gender, String imageUrl, String speciality, int experienceInMonth) {
+    public Doctor(String uid, int intId, String name, String gender, String imageUrl, String description, int experienceInMonth, String specialities) {
         super(uid,intId,name,imageUrl,true, gender);
-        this.speciality = speciality;
+        this.description = description;
+        this.specialities = specialities;
         this.experienceInMonth = experienceInMonth;
     }
 
@@ -31,18 +37,27 @@ public class Doctor extends User{
         map.put("name", getName());
         map.put("gender",getGender());
         map.put("imageUrl",getImageUrl());
-        map.put("speciality", getSpeciality());
+        map.put("description",description);
+        map.put("speciality", specialities);
         map.put("experienceInMonth", getExperienceInMonth());
 
         return map;
     }
 
-    public String getSpeciality() {
-        return speciality;
+    public String getDescription() {
+        return description;
     }
 
-    public void setSpeciality(String speciality) {
-        this.speciality = speciality;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getSpecialities() {
+        return specialities;
+    }
+
+    public void setSpecialities(String specialities) {
+        this.specialities = specialities;
     }
 
     public int getExperienceInMonth() {
@@ -55,7 +70,20 @@ public class Doctor extends User{
 
     @Exclude
     public String getSpecialityMessage(){
-        return speciality;
+        return specialities;
+    }
+
+    @Exclude
+    public List<Speciality> getAllSpecialities(){
+        String[] words = specialities.split("[\\s+,]");
+        final List<Speciality> list = new ArrayList<>();
+
+        for(String word : words){
+            try{
+                list.add( Speciality.valueOf(word.toLowerCase()) );
+            }catch (Exception ignored){}
+        }
+        return list;
     }
 
 }

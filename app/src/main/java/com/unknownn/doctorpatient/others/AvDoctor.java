@@ -11,7 +11,7 @@ public class AvDoctor extends Doctor{
     }
 
     public AvDoctor(String uid, int intId, String name, String gender, String imageUrl, String speciality, int experienceInMonth, long lastOnlineTime, boolean inCall) {
-        super(uid, intId, name,gender,imageUrl , speciality, experienceInMonth);
+        super(uid, intId, name,gender,imageUrl ,null, experienceInMonth,speciality);
         this.lastOnlineTime = lastOnlineTime;
         this.inCall = inCall;
     }
@@ -35,7 +35,7 @@ public class AvDoctor extends Doctor{
     }
 
     public String getSpecialityMessage(){
-        return "Specialist in "+getSpeciality();
+        return "Specialist in "+getDescription();
     }
 
     public void setInCall(boolean inCall) {
@@ -43,6 +43,6 @@ public class AvDoctor extends Doctor{
     }
 
     public boolean fullySame(final AvDoctor item){
-        return super.getSpeciality().equals(item.getSpeciality()) && getImageUrl().equals(item.getImageUrl());
+        return super.getDescription().equals(item.getDescription()) && getImageUrl().equals(item.getImageUrl());
     }
 }

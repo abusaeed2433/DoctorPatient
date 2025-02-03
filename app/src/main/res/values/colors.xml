@@ -36,6 +36,7 @@
 
     <color name="left_icon_color">#42a5f5</color>
     <color name="text_color">#242424</color>
+    <color name="text_color_inverse">#E2E2E2</color>
     <color name="text_color_1">#31AA1D</color>
     <color name="text_color_2">#AA5F1D</color>
     <color name="text_color_3">#1DAA72</color>

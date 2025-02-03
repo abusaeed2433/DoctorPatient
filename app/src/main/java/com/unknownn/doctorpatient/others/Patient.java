@@ -9,7 +9,9 @@ import android.text.style.StyleSpan;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 
-public class Patient extends User{
+import java.io.Serializable;
+
+public class Patient extends User implements Serializable {
     @PropertyName("age")
     private int age;
 

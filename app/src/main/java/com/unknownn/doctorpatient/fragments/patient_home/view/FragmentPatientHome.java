@@ -20,21 +20,20 @@ import com.google.firebase.database.ValueEventListener;
 import com.unknownn.doctorpatient.R;
 import com.unknownn.doctorpatient.adapter.AvAdapter;
 import com.unknownn.doctorpatient.databinding.FragmentHomeBinding;
-import com.unknownn.doctorpatient.fragments.patient_home.model.Speciality;
-import com.unknownn.doctorpatient.others.AvDoctor;
+import com.unknownn.doctorpatient.enums.Speciality;
 import com.unknownn.doctorpatient.others.Doctor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 public class FragmentPatientHome extends Fragment {
 
-    private final Set<String> selectedSpecialities = new TreeSet<>();
+    private final Set<Speciality> selectedSpecialities = new TreeSet<>();
 
     private FragmentHomeBinding binding = null;
-
     private final List<Doctor> doctorList = new ArrayList<>();
     private AvAdapter doctorAdapter;
 
@@ -90,7 +89,22 @@ public class FragmentPatientHome extends Fragment {
         binding.rvDoctors.setAdapter(doctorAdapter);
     }
 
+    private List<Doctor> filterList(List<Doctor> doctors){
+        final List<Doctor> tempList = new ArrayList<>();
+
+        for(Doctor doctor : doctors){
+            //if(selectedSpecialities.contains("All"))
+        }
+
+        return doctors;
+    }
+
     private void updateAdapter(List<Doctor> doctors){
+        this.doctorList.clear();
+        this.doctorList.addAll(doctors);
+
+        doctors = filterList(doctors);
+
         binding.progressBar.setVisibility(View.GONE);
         if(doctors.isEmpty()){
             binding.tvNotFound.setVisibility(View.VISIBLE);
@@ -99,37 +113,21 @@ public class FragmentPatientHome extends Fragment {
             binding.tvNotFound.setVisibility(View.INVISIBLE);
         }
 
-        this.doctorList.clear();
-        this.doctorList.addAll(doctors);
-        doctorAdapter.submitList(this.doctorList);
+        doctorAdapter.submitList(doctors);
     }
     private void showSpecialityList(){
-        String[] arr = new String[]{"All","Dentist", "Medicine", "Cardiologist", "Mental", "Central"};
-        String[] urls = new String[]{
-                "https://i.postimg.cc/MKCQtqGB/cardiologist.png",
-                "https://i.postimg.cc/MKCQtqGB/cardiologist.png",
-                "https://i.postimg.cc/ZYD3BrtV/dentist.png",
-                "https://i.postimg.cc/YqGF1htk/medicine.png",
-                "https://i.postimg.cc/JzjB2vy2/sarcastic.png",
-                "https://i.postimg.cc/JzjB2vy2/sarcastic.png"
-        };
-        final List<Speciality> specialities = new ArrayList<>();
-        for(int i=0; i<arr.length; i++){
-            specialities.add(new Speciality(arr[i], urls[i]));
-        }
-
         final SpecialityAdapter adapter = new SpecialityAdapter(getActivity(), (speciality, removed) -> {
             if(removed){
-                selectedSpecialities.remove(speciality.getName());
+                selectedSpecialities.remove(speciality);
             }
             else{
-                selectedSpecialities.add(speciality.getName());
+                selectedSpecialities.add(speciality);
             }
         });
 
-        selectedSpecialities.add(specialities.get(0).getName());
+        selectedSpecialities.add(Speciality.ALL);
         binding.rvSpeciality.setAdapter(adapter);
-        adapter.submitList(specialities);
+        adapter.submitList(Speciality.getAll());
     }
 
 }

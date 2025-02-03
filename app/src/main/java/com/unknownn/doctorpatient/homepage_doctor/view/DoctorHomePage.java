@@ -59,10 +59,7 @@ public class DoctorHomePage extends AppCompatActivity implements SnapListener {
 
     private static final int UPDATE_TIME_INTERVAL = 10000;
     public static final int UPDATE_TIME_INTERVAL_MAX = 12000;
-//    private ProgressBar progressBar;
-//    private TextView tvMessage;
-//    private RecyclerView recyclerView;
-//    private Button buttonExit;
+
     private AvAdapter adapter;
 
     private boolean amIDoctor = false, forceExit = false, hasDoublePressed = false;
@@ -596,7 +593,7 @@ public class DoctorHomePage extends AppCompatActivity implements SnapListener {
             map.put("inCall",false);
 
             Doctor doctor = (Doctor)getSp().getMyProfile();
-            map.put("speciality",doctor.getSpeciality());
+            map.put("speciality",doctor.getDescription());
             map.put("imageUrl",doctor.getImageUrl());
 
             ref.updateChildren(map).addOnCompleteListener(task -> listener.onDataSaved(task.isSuccessful()));

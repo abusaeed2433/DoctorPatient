@@ -39,7 +39,7 @@ public class AvAdapter extends ListAdapter<Doctor, AvAdapter.ViewHolder> {
 
         @Override
         public boolean areContentsTheSame(@NonNull Doctor oldItem, @NonNull Doctor newItem) {
-            return oldItem.getName().equals(newItem.getName()) && oldItem.getSpeciality().equals(newItem.getSpeciality()) && oldItem.getImageUrl().equals(newItem.getImageUrl());
+            return oldItem.getName().equals(newItem.getName());
         }
     };
 

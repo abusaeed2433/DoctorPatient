@@ -48,8 +48,9 @@ public class SharedPref {
         else{
             final String speciality = spProfile.getString("speciality", null);
             final int experienceInMonth = spProfile.getInt("experience_in_month",-1);
+            final String specialitites = spProfile.getString("specialitites",null);
 
-            return new Doctor(uid,intId,name, gender, imageUrl,speciality, experienceInMonth);
+            return new Doctor(uid,intId,name, gender, imageUrl,speciality, experienceInMonth, specialitites);
         }
     }
 
@@ -75,7 +76,7 @@ public class SharedPref {
         }
         else{
             final Doctor doctor = (Doctor) user;
-            editor.putString("speciality", doctor.getSpeciality());
+            editor.putString("specialitites", doctor.getSpecialities());
             editor.putInt("experience_in_month", doctor.getExperienceInMonth());
         }
 
