@@ -193,6 +193,13 @@ public class Appointment implements Comparable<Appointment>{
     }
 
     @Exclude
+    public long getTimestamp(){
+        if(timestamp == 0) getDayDD();
+
+        return timestamp;
+    }
+
+    @Exclude
     public boolean conditionalEqual(Appointment item, boolean showDoctorData){
         if( !time.equals(item.time) || !date.equals(item.date)) return false;
 

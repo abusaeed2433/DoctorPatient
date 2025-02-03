@@ -1,6 +1,7 @@
 package com.unknownn.doctorpatient.fragments.patient_appointment.view;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,9 +21,13 @@ import com.google.firebase.database.ValueEventListener;
 import com.unknownn.doctorpatient.databinding.FragmentAppointmentBinding;
 import com.unknownn.doctorpatient.homepage_doctor.model.Appointment;
 import com.unknownn.doctorpatient.homepage_doctor.view.AppointmentAdapter;
+import com.unknownn.doctorpatient.homepage_patient.view.PatientHomePage;
 import com.unknownn.doctorpatient.others.SharedPref;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -30,6 +35,7 @@ public class FragmentPatientAppointment extends Fragment {
 
     private FragmentAppointmentBinding binding = null;
     private AppointmentAdapter appointmentAdapter;
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -78,7 +84,30 @@ public class FragmentPatientAppointment extends Fragment {
             binding.tvNotFound.setVisibility(View.INVISIBLE);
         }
 
+        Collections.sort(list);
         appointmentAdapter.submitList(list);
+
+        if(list.isEmpty()){
+            sendAppointment(null);
+            return;
+        }
+
+        final LocalDateTime localDateTime = LocalDateTime.now().plusMinutes(5);
+        if(list.get(0).getTimestamp() <= localDateTime.toEpochSecond(ZoneOffset.UTC)){
+            sendAppointment(list.get(0));
+        }
+        else{
+            sendAppointment(null);
+        }
+    }
+
+    private void sendAppointment(Appointment appointment){
+        final Activity activity = getActivity();
+        if(activity == null) return;
+
+        if(activity instanceof PatientHomePage){
+            ((PatientHomePage)activity).sendCurrentAppointment(appointment);
+        }
     }
 
     private void downloadAppointments(){

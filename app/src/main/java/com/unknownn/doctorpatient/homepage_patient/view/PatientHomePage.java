@@ -40,6 +40,7 @@ import com.unknownn.doctorpatient.databinding.ActivityPatientHomepageBinding;
 import com.unknownn.doctorpatient.fragments.patient_appointment.view.FragmentPatientAppointment;
 import com.unknownn.doctorpatient.fragments.patient_chat.view.FragmentPatientChat;
 import com.unknownn.doctorpatient.fragments.patient_home.view.FragmentPatientHome;
+import com.unknownn.doctorpatient.homepage_doctor.model.Appointment;
 import com.unknownn.doctorpatient.others.AvDoctor;
 import com.unknownn.doctorpatient.others.Patient;
 import com.unknownn.doctorpatient.others.SharedPref;
@@ -55,6 +56,7 @@ public class PatientHomePage extends AppCompatActivity {
     private TextView tvProgress;
     private String appId = null, token = null, cName = null;
     private int selectedPage = 0;
+    private FragmentPatientHome.AppointmentListener listener = null;
     private ActivityPatientHomepageBinding binding = null;
 
     @Override
@@ -372,6 +374,38 @@ public class PatientHomePage extends AppCompatActivity {
     private void showSnackBar(String message){
         Snackbar snackbar = Snackbar.make(binding.relativeLayoutHomepage,message,Snackbar.LENGTH_LONG);
         snackbar.show();
+    }
+
+    public void setAppointmentListener(FragmentPatientHome.AppointmentListener listener){
+        this.listener = listener;
+        if(lastAppointment != null){
+            this.listener.sendCurrentAppointment(lastAppointment);
+        }
+    }
+
+    private Appointment lastAppointment = null;
+    public void sendCurrentAppointment(Appointment appointment){
+        appointment = new Appointment(
+                "1",
+                "03/02/2025",
+                "08:45PM",
+                "doc_uid",
+                "Kutta",
+                "Dentist",
+                null,
+                "pid",
+                "cat",
+                "none",
+                null,
+                true
+        );
+
+        if(this.listener == null){
+            lastAppointment = appointment;
+        }
+        else{
+            this.listener.sendCurrentAppointment(appointment);
+        }
     }
 
 }

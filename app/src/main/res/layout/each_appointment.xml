@@ -59,7 +59,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/tvTime"
+        app:layout_constraintBottom_toTopOf="@+id/clTime"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ivProfile"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout">
@@ -85,31 +85,52 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tvTime"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clTime"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ivProfile"
-        android:ellipsize="end"
-        android:paddingStart="4dp"
-        android:paddingEnd="4dp"
-        android:background="@drawable/am_pm_back"
-        android:maxLines="1"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        tools:text="9:30AM" />
+        app:layout_constraintStart_toEndOf="@+id/ivProfile">
 
-    <ImageView
-        android:id="@+id/ivDetails"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:contentDescription="@string/icon_only"
-        app:layout_constraintHorizontal_bias="1"
-        android:src="@drawable/right_chevron"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tvTime" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_gravity="center_vertical"
+            android:background="@color/dim_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tvTime"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/am_pm_back"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ivDetails"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="9:30AM" />
+
+        <ImageView
+            android:id="@+id/ivDetails"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:contentDescription="@string/icon_only"
+            android:padding="4dp"
+            android:src="@drawable/right_chevron"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
