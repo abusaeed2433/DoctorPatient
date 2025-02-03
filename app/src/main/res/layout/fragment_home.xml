@@ -30,13 +30,14 @@
             android:layout_marginEnd="8dp"/>
 
         <EditText
-            android:id="@+id/searchInput"
+            android:id="@+id/editTextSearch"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/search_by_name_speciality"
             android:background="@null"
             android:importantForAutofill="no"
             android:inputType="text"
+            android:imeOptions="actionSearch"
             android:paddingVertical="8dp"
             android:paddingEnd="8dp"
             android:paddingStart="8dp"

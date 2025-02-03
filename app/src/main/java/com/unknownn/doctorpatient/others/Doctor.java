@@ -77,6 +77,8 @@ public class Doctor extends User implements Serializable {
 
     @Exclude
     public List<Speciality> getAllSpecialities(){
+        if(specialities == null) specialities = "";
+
         String[] words = specialities.split("[\\s,]+");
         final List<Speciality> list = new ArrayList<>();
 

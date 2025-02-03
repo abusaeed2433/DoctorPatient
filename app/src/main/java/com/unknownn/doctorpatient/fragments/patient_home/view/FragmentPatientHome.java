@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,6 +33,7 @@ import java.util.TreeSet;
 public class FragmentPatientHome extends Fragment {
 
     private final Set<Speciality> selectedSpecialities = new TreeSet<>();
+    private String searchKey = "";
 
     private FragmentHomeBinding binding = null;
     private final List<Doctor> doctorList = new ArrayList<>();
@@ -49,6 +51,7 @@ public class FragmentPatientHome extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         startAdapter();
+        setListener();
         showSpecialityList();
         downloadAllDoctors();
     }
@@ -78,6 +81,17 @@ public class FragmentPatientHome extends Fragment {
         });
     }
 
+    private void setListener(){
+        binding.editTextSearch.setOnEditorActionListener((textView, i, keyEvent) -> {
+            if (i == EditorInfo.IME_ACTION_SEARCH) {
+                searchKey = String.valueOf(binding.editTextSearch.getText()).toLowerCase().trim();
+                filterAndShow(this.doctorList);
+                return true;
+            }
+            return false;
+        });
+    }
+
     private void startAdapter(){
         doctorAdapter = new AvAdapter(getActivity(), this::openDoctorDetailsPage);
 
@@ -93,19 +107,24 @@ public class FragmentPatientHome extends Fragment {
 
     private List<Doctor> filterList(List<Doctor> doctors){
         final List<Doctor> tempList = new ArrayList<>();
-
+        mainLoop:
         for(Doctor doctor : doctors){
-            //if(selectedSpecialities.contains("All"))
+            if(!doctor.getName().contains(searchKey)) continue;
+
+            final List<Speciality> docSpecialities = doctor.getAllSpecialities();
+            for(Speciality sp : docSpecialities){
+                if(selectedSpecialities.contains(Speciality.ALL) || selectedSpecialities.contains(sp)){
+                    tempList.add(doctor);
+                    continue mainLoop;
+                }
+            }
         }
 
-        return doctors;
+        return tempList;
     }
 
-    private void updateAdapter(List<Doctor> doctors){
-        this.doctorList.clear();
-        this.doctorList.addAll(doctors);
-
-        doctors = filterList(doctors);
+    private void filterAndShow(List<Doctor> doctorList){
+        List<Doctor> doctors = filterList(doctorList);
 
         binding.progressBar.setVisibility(View.GONE);
         if(doctors.isEmpty()){
@@ -117,6 +136,13 @@ public class FragmentPatientHome extends Fragment {
 
         doctorAdapter.submitList(doctors);
     }
+
+    private void updateAdapter(List<Doctor> doctors){
+        this.doctorList.clear();
+        this.doctorList.addAll(doctors);
+        filterAndShow(this.doctorList);
+    }
+
     private void showSpecialityList(){
         final SpecialityAdapter adapter = new SpecialityAdapter(getActivity(), (speciality, removed) -> {
             if(removed){
@@ -125,6 +151,7 @@ public class FragmentPatientHome extends Fragment {
             else{
                 selectedSpecialities.add(speciality);
             }
+            filterAndShow(doctorList);
         });
 
         selectedSpecialities.add(Speciality.ALL);
