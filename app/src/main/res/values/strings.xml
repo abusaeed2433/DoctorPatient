@@ -76,4 +76,8 @@
     <string name="my_appointments">My appointments</string>
     <string name="about_yourself">About yourself</string>
     <string name="all">All</string>
+    <string name="about_the_doctor">About the doctor</string>
+    <string name="about_the_patient">About the patient</string>
+    <string name="delete">Delete</string>
+    <string name="accept">Accept</string>
 </resources>

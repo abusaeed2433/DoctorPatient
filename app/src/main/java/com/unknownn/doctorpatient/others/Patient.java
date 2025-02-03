@@ -46,6 +46,11 @@ public class Patient extends User implements Serializable {
         this.desc = desc;
     }
 
+    @Exclude
+    public String getBasicInfo(){
+        return weight+" kg | "+heightFt+"ft"+heightIn+"in";
+    }
+
     public int getHeightFt() {
         return heightFt;
     }

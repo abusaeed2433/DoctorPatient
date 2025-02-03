@@ -3,12 +3,13 @@ package com.unknownn.doctorpatient.homepage_doctor.model;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
-public class Appointment implements Comparable<Appointment>{
+public class Appointment implements Comparable<Appointment>, Serializable {
     // common
     @PropertyName("appointment_id") // doctorId_patientId_date_time
     private String appointmentId;
@@ -24,6 +25,7 @@ public class Appointment implements Comparable<Appointment>{
     private String doctorName;
     @PropertyName("doctor_speciality")
     private String doctorSpeciality;
+
     @PropertyName("doctor_image")
     private String doctorImage;
 

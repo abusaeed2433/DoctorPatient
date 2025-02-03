@@ -18,12 +18,13 @@
         android:roundIcon="@mipmap/ic_launcher_foreground"
         android:supportsRtl="true"
         android:theme="@style/Theme.DoctorPatient">
-
+        <activity
+            android:name=".appointment_details.AppointmentDetailsActivity"
+            android:exported="false" />
         <activity
             android:name=".DoctorProfile"
             android:exported="false"
-            android:parentActivityName=".homepage_doctor.view.DoctorHomePage"/>
-
+            android:parentActivityName=".homepage_doctor.view.DoctorHomePage" />
         <activity
             android:name=".PatientProfile"
             android:exported="false"

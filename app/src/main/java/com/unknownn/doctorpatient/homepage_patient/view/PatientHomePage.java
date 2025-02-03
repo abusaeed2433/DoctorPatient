@@ -385,20 +385,20 @@ public class PatientHomePage extends AppCompatActivity {
 
     private Appointment lastAppointment = null;
     public void sendCurrentAppointment(Appointment appointment){
-        appointment = new Appointment(
-                "1",
-                "03/02/2025",
-                "08:45PM",
-                "doc_uid",
-                "Kutta",
-                "Dentist",
-                null,
-                "pid",
-                "cat",
-                "none",
-                null,
-                true
-        );
+//        appointment = new Appointment(
+//                "1",
+//                "03/02/2025",
+//                "08:45PM",
+//                "doc_uid",
+//                "Kutta",
+//                "Dentist",
+//                null,
+//                "pid",
+//                "cat",
+//                "none",
+//                null,
+//                true
+//        );
 
         if(this.listener == null){
             lastAppointment = appointment;

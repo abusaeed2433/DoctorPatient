@@ -3,7 +3,7 @@
     android:color="@color/dark_red">
     <item android:id="@android:id/mask">
         <shape>
-            <corners android:radius="16dp" />
+            <corners android:radius="4dp" />
             <solid
                 android:color="@color/light_red_drawable_color"/>
         </shape>
@@ -11,7 +11,7 @@
 
     <item android:id="@android:id/background">
         <shape>
-            <corners android:radius="16dp" />
+            <corners android:radius="4dp" />
             <solid android:color="@color/light_red_drawable_color"/>
         </shape>
 

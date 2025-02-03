@@ -2,6 +2,7 @@ package com.unknownn.doctorpatient.fragments.patient_home.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -23,6 +24,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.unknownn.doctorpatient.R;
 import com.unknownn.doctorpatient.adapter.AvAdapter;
+import com.unknownn.doctorpatient.appointment_details.AppointmentDetailsActivity;
+import com.unknownn.doctorpatient.databinding.ActivityPatientHomepageBinding;
 import com.unknownn.doctorpatient.databinding.FragmentHomeBinding;
 import com.unknownn.doctorpatient.enums.Speciality;
 import com.unknownn.doctorpatient.homepage_doctor.model.Appointment;
@@ -43,34 +46,33 @@ public class FragmentPatientHome extends Fragment {
     private FragmentHomeBinding binding = null;
     private final List<Doctor> doctorList = new ArrayList<>();
     private AvAdapter doctorAdapter;
+    private Appointment lastAppointment = null;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         Activity activity = getActivity();
         if(activity instanceof PatientHomePage){
-            ((PatientHomePage) activity).setAppointmentListener(new AppointmentListener() {
-                @Override
-                public void sendCurrentAppointment(@Nullable Appointment curItem) {
-                    if(curItem == null){
-                        binding.tvNoAppointment.setVisibility(View.VISIBLE);
-                        binding.clCurrentAppointmentMain.setVisibility(View.GONE);
-                    }
-                    else{
-                        binding.tvNoAppointment.setVisibility(View.GONE);
-                        binding.clCurrentAppointmentMain.setVisibility(View.VISIBLE);
+            ((PatientHomePage) activity).setAppointmentListener(curItem -> {
+                if(curItem == null){
+                    binding.tvNoAppointment.setVisibility(View.VISIBLE);
+                    binding.clCurrentAppointmentMain.setVisibility(View.GONE);
+                }
+                else{
+                    FragmentPatientHome.this.lastAppointment = curItem;
+                    binding.tvNoAppointment.setVisibility(View.GONE);
+                    binding.clCurrentAppointmentMain.setVisibility(View.VISIBLE);
 
-                        binding.tvDayDD.setText( curItem.getDayDD() );
-                        binding.tvMonthDayName.setText( curItem.getDateMmDayName() );
-                        Glide.with(activity)
-                                .load(curItem.getDoctorImage())
-                                .timeout(30*1000)
-                                .placeholder(R.drawable.doctor_icon)
-                                .into(binding.ivProfile);
-                        binding.tvName.setText( curItem.getDoctorName() );
-                        binding.tvTime.setText( curItem.getTime() );
-                        binding.tvInfo.setText( curItem.getDoctorSpeciality() );
-                    }
+                    binding.tvDayDD.setText( curItem.getDayDD() );
+                    binding.tvMonthDayName.setText( curItem.getDateMmDayName() );
+                    Glide.with(activity)
+                            .load(curItem.getDoctorImage())
+                            .timeout(30*1000)
+                            .placeholder(R.drawable.doctor_icon)
+                            .into(binding.ivProfile);
+                    binding.tvName.setText( curItem.getDoctorName() );
+                    binding.tvTime.setText( curItem.getTime() );
+                    binding.tvInfo.setText( curItem.getDoctorSpeciality() );
                 }
             });
         }
@@ -127,6 +129,17 @@ public class FragmentPatientHome extends Fragment {
             }
             return false;
         });
+        binding.clCurrentAppointmentMain.setOnClickListener(v -> openAppointmentPage(lastAppointment));
+    }
+
+    private void openAppointmentPage(Appointment appointment){
+        final Activity activity = getActivity();
+        if(activity == null) return;
+
+        final Intent intent = new Intent(activity, AppointmentDetailsActivity.class);
+        intent.putExtra("appointment", appointment);
+        startActivity(intent);
+        activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     private void startAdapter(){
