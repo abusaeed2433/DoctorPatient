@@ -10,7 +10,9 @@
     <ScrollView
         android:id="@+id/scrollView2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -28,7 +30,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/clCurrentAppointment">
 
                 <TextView
-                    android:id="@+id/textView4"
+                    android:id="@+id/tvAboutWhom"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/text_color_inverse"
@@ -115,9 +117,39 @@
 
     </ScrollView>
 
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/llOnlineStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/llButtonHolder"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scrollView2" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/currently"
+            android:textSize="@dimen/text_size"
+            android:textColor="@color/text_color"/>
+
+        <TextView
+            android:id="@+id/tvAvailableStatus"
+            android:layout_width="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textSize="20sp"
+            android:layout_height="wrap_content"
+            android:text="@string/offline"
+            android:textStyle="bold"
+            android:textColor="@color/red"/>
+
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/llButtonHolder"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"

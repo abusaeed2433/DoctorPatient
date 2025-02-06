@@ -46,7 +46,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class DoctorHomePage extends AppCompatActivity {
 
-    private static final int UPDATE_TIME_INTERVAL = 10000;
+    public static final int UPDATE_TIME_INTERVAL = 10000;
     public static final int UPDATE_TIME_INTERVAL_MAX = 12000;
 
     private boolean forceExit = false, hasDoublePressed = false;

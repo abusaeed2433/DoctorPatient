@@ -1,6 +1,8 @@
 package com.unknownn.doctorpatient.appointment_details;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -17,14 +19,21 @@ import com.google.firebase.database.ValueEventListener;
 import com.unknownn.doctorpatient.R;
 import com.unknownn.doctorpatient.databinding.ActivityAppointmentDetailsBinding;
 import com.unknownn.doctorpatient.homepage_doctor.model.Appointment;
+import com.unknownn.doctorpatient.homepage_doctor.view.DoctorHomePage;
 import com.unknownn.doctorpatient.others.Doctor;
 import com.unknownn.doctorpatient.others.Patient;
 import com.unknownn.doctorpatient.others.SharedPref;
 import com.unknownn.doctorpatient.others.User;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class AppointmentDetailsActivity extends AppCompatActivity {
 
+    private long lastTimeFromDatabase = 0L;
     private ActivityAppointmentDetailsBinding binding = null;
+    private final Timer timer = new Timer();
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +45,67 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
         final boolean amIDoctor = new SharedPref(this).getMyProfile().isAmIDoctor();
         downloadData(appointment, amIDoctor);
         setClickListener(appointment, amIDoctor);
+
+        if(appointment != null) {
+            downloadDoctorStatus(amIDoctor, appointment.getDoctorUid());
+        }
+    }
+
+
+    private void downloadDoctorStatus(boolean amIDoctor, String doctorUid){
+        if(amIDoctor){
+            binding.llOnlineStatus.setVisibility(View.GONE);
+            return;
+        }
+
+        // patient seeing doctor details
+        binding.llOnlineStatus.setVisibility(View.VISIBLE);
+        repeatAtInterval();
+
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("available/doctor").child(doctorUid);
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(!snapshot.exists()) return;
+
+                Long temp = snapshot.child("lastOnlineTime").getValue(Long.class);
+                if(temp == null) return;
+
+                lastTimeFromDatabase = temp;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void repeatAtInterval(){
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                final long curTime = System.currentTimeMillis();
+
+                mHandler.post(() -> {
+                    boolean isActive = (curTime - lastTimeFromDatabase) < DoctorHomePage.UPDATE_TIME_INTERVAL;
+
+                    binding.tvAvailableStatus.setText(
+                            isActive ? getString(R.string.online) : getString(R.string.offline)
+                    );
+                    binding.tvAvailableStatus.setTextColor(
+                            getResources().getColor(
+                                    isActive ? R.color.blue : R.color.red,
+                                    null
+                            )
+                    );
+
+                });
+
+            }
+        };
+
+        timer.schedule(timerTask, 0, DoctorHomePage.UPDATE_TIME_INTERVAL);
     }
 
     private void downloadData(Appointment appointment, boolean amIDoctor){
@@ -99,6 +169,8 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
 
         final boolean amIDoctor = (doctor != null);
 
+        binding.tvAboutWhom.setText( getString(R.string.about_the_ph, (amIDoctor ? "doctor" : "patient")) );
+
         Glide.with(this)
                 .load(amIDoctor ? doctor.getImageUrl() : patient.getImageUrl())
                 .timeout(30*1000)
@@ -134,4 +206,11 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
     // todo add button for join call in appointment details page
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        timer.cancel();
+    }
 }
