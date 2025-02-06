@@ -61,7 +61,7 @@
             android:id="@+id/tvMyAppointments"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/running_appointment"
+            android:text="@string/upcoming_appointment"
             android:textColor="@color/blueish"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -69,6 +69,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/tvSeeAll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/see_all"

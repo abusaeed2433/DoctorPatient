@@ -131,6 +131,12 @@ public class FragmentPatientHome extends Fragment {
             return false;
         });
         binding.clCurrentAppointmentMain.setOnClickListener(v -> openAppointmentPage(lastAppointment));
+        binding.tvSeeAll.setOnClickListener(v -> {
+            Activity activity = getActivity();
+            if( !(activity instanceof PatientHomePage) ) return;
+
+            ((PatientHomePage)activity).showAllAppointment();
+        });
     }
 
     private void openAppointmentPage(Appointment appointment){

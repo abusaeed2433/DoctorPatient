@@ -58,6 +58,7 @@ public class PatientHomePage extends AppCompatActivity {
     private int selectedPage = 0;
     private FragmentPatientHome.AppointmentListener listener = null;
     private ActivityPatientHomepageBinding binding = null;
+    private Appointment lastAppointment = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -383,7 +384,12 @@ public class PatientHomePage extends AppCompatActivity {
         }
     }
 
-    private Appointment lastAppointment = null;
+    public void showAllAppointment(){
+        binding.viewPager.setCurrentItem(1);
+        binding.bnv.setSelectedItemId(R.id.navAppointment);
+        selectedPage = 1;
+    }
+
     public void sendCurrentAppointment(Appointment appointment){
 //        appointment = new Appointment(
 //                "1",
