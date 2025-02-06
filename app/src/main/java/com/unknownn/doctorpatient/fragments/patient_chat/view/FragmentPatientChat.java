@@ -1,66 +1,107 @@
 package com.unknownn.doctorpatient.fragments.patient_chat.view;
 
+import android.app.Activity;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.unknownn.doctorpatient.R;
+import com.unknownn.doctorpatient.databinding.FragmentPatientChatBinding;
+import com.unknownn.doctorpatient.fragments.patient_chat.model.EachChat;
+import com.unknownn.doctorpatient.others.ItemClickListener;
+import com.unknownn.doctorpatient.others.SharedPref;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FragmentPatientChat#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.security.auth.callback.CallbackHandler;
+
 public class FragmentPatientChat extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public FragmentPatientChat() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FragmentPatientChat.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FragmentPatientChat newInstance(String param1, String param2) {
-        FragmentPatientChat fragment = new FragmentPatientChat();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private ChatAdapter chatAdapter = null;
+    private FragmentPatientChatBinding binding = null;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_patient_chat, container, false);
+        binding = FragmentPatientChatBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        startAdapter();
+        downloadChatList();
+    }
+
+    private void startAdapter(){
+        Activity activity = getActivity();
+        if(activity == null) return;
+
+        chatAdapter = new ChatAdapter(activity, false, new ItemClickListener<EachChat>() {
+            @Override
+            public void onItemClick(EachChat item) {
+                // todo open chatting page
+            }
+        });
+        binding.rvChat.setAdapter(chatAdapter);
+    }
+
+    private void downloadChatList(){
+        final Activity activity = getActivity();
+        if(activity == null) return;
+
+        final String patUid = new SharedPref(activity).getMyProfile().getUid();
+        final Query query = FirebaseDatabase.getInstance().getReference("chats")
+                .orderByKey()
+                .endAt(patUid);
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                final List<EachChat> list = new ArrayList<>();
+
+                for(DataSnapshot ds : snapshot.getChildren()){
+                    EachChat chat = ds.getValue(EachChat.class);
+                    if(chat == null) continue;
+
+                    list.add(chat);
+                }
+                updateAdapter(list);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                updateAdapter(new ArrayList<>());
+            }
+        });
+    }
+
+    private void updateAdapter(List<EachChat> chatList){
+        binding.progressBar.setVisibility(View.GONE);
+
+        if(chatList.isEmpty()){
+            binding.tvNotFound.setVisibility(View.VISIBLE);
+        }
+        else{
+            binding.tvNotFound.setVisibility(View.GONE);
+        }
+
+        chatAdapter.submitList(chatList);
+    }
+
 }

@@ -85,4 +85,5 @@
     <string name="offline">Offline</string>
     <string name="online">Online</string>
     <string name="upcoming_appointment">Upcoming appointment</string>
+    <string name="no_chats_found">No chats found</string>
 </resources>

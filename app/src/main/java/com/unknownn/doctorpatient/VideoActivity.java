@@ -197,7 +197,7 @@ public class VideoActivity extends AppCompatActivity {
         mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(), this::uploadToStorage);
     }
 
-    private String getMessageKey(){
+    private String getMessageKey(){ // don't change it bro. Same format is used in chat page
         return docUid+"_"+patUid;
     }
 

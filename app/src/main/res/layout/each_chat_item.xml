@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginTop="4dp"
+    android:background="@drawable/corner_round_only"
+    android:backgroundTint="@color/white_dim"
+    android:id="@+id/ll_holder">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/ivProfile"
+        app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center_vertical"
+        android:padding="4dp"
+        android:src="@drawable/doctor_icon"
+        app:strokeColor="@color/dim_black_dim_white"
+        android:scaleType="centerCrop"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="7"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/text_color"
+            tools:text="Md Abu Saeed"
+            android:textStyle="bold"
+            android:textSize="@dimen/text_size_medium"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:gravity="center_vertical"/>
+
+        <TextView
+            android:id="@+id/tvLastMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Ami hashte hashte dead"
+            android:textSize="@dimen/text_size_small"
+            android:textColor="@color/text_color"
+            android:gravity="center_vertical"
+            android:maxLines="1"/>
+    </LinearLayout>
+
+</LinearLayout>
