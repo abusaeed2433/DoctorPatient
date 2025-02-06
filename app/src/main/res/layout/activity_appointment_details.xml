@@ -119,19 +119,20 @@
 
 
     <LinearLayout
-        android:visibility="gone"
         android:id="@+id/llOnlineStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/llButtonHolder"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/scrollView2" >
 
         <TextView
+            android:id="@+id/tvOnlineLeft"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:text="@string/currently"
             android:textSize="@dimen/text_size"
             android:textColor="@color/text_color"/>
@@ -139,8 +140,10 @@
         <TextView
             android:id="@+id/tvAvailableStatus"
             android:layout_width="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_gravity="center_horizontal"
+            android:letterSpacing=".2"
             android:textSize="20sp"
+            android:textAllCaps="true"
             android:layout_height="wrap_content"
             android:text="@string/offline"
             android:textStyle="bold"

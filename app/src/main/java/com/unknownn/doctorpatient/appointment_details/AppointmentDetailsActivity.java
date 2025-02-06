@@ -1,10 +1,14 @@
 package com.unknownn.doctorpatient.appointment_details;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,10 +21,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.unknownn.doctorpatient.R;
+import com.unknownn.doctorpatient.VideoActivity;
 import com.unknownn.doctorpatient.databinding.ActivityAppointmentDetailsBinding;
 import com.unknownn.doctorpatient.homepage_doctor.model.Appointment;
 import com.unknownn.doctorpatient.homepage_doctor.view.DoctorHomePage;
 import com.unknownn.doctorpatient.others.Doctor;
+import com.unknownn.doctorpatient.others.MyPopUp;
 import com.unknownn.doctorpatient.others.Patient;
 import com.unknownn.doctorpatient.others.SharedPref;
 import com.unknownn.doctorpatient.others.User;
@@ -34,6 +40,7 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
     private ActivityAppointmentDetailsBinding binding = null;
     private final Timer timer = new Timer();
     private final Handler mHandler = new Handler(Looper.getMainLooper());
+    private Dialog mainDialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,16 +50,52 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
 
         final Appointment appointment = (Appointment) getIntent().getSerializableExtra("appointment");
         final boolean amIDoctor = new SharedPref(this).getMyProfile().isAmIDoctor();
-        downloadData(appointment, amIDoctor);
+        downloadProfile(appointment, amIDoctor);
         setClickListener(appointment, amIDoctor);
 
         if(appointment != null) {
-            downloadDoctorStatus(amIDoctor, appointment.getDoctorUid());
+            downloadAppointment(appointment);
+            downloadDoctorStatus(amIDoctor, appointment);
         }
     }
 
+    private ValueEventListener appointmentListener;
+    private DatabaseReference appointmentRef;
+    private void downloadAppointment(Appointment appointment){
+        appointmentRef = FirebaseDatabase.getInstance().getReference("appointment").child(appointment.getAppointmentId());
+        appointmentListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(!snapshot.exists()) {
+                    finish(); // automatically back to homepage
+                    return;
+                }
 
-    private void downloadDoctorStatus(boolean amIDoctor, String doctorUid){
+                Boolean temp = snapshot.child("confirmed").getValue(Boolean.class);
+                if(temp == null) return;
+                boolean isAccepted = temp;
+
+                appointment.setConfirmed(isAccepted);
+                if(isAccepted){
+                    binding.tvOnlineLeft.setText(getString(R.string.ph_string_only, "Doctor is currently"));
+                    binding.tvAvailableStatus.setText(getString(R.string.offline));
+                }
+                else{
+                    binding.tvOnlineLeft.setText(getString(R.string.ph_string_only, "Your appointment is still"));
+                    binding.tvAvailableStatus.setText(getString(R.string.ph_string_only, "Pending"));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+        appointmentRef.addValueEventListener(appointmentListener);
+
+    }
+
+    private void downloadDoctorStatus(boolean amIDoctor, Appointment appointment){
         if(amIDoctor){
             binding.llOnlineStatus.setVisibility(View.GONE);
             return;
@@ -60,9 +103,9 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
 
         // patient seeing doctor details
         binding.llOnlineStatus.setVisibility(View.VISIBLE);
-        repeatAtInterval();
+        repeatAtInterval(appointment);
 
-        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("available/doctor").child(doctorUid);
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("available/doctor").child(appointment.getDoctorUid());
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -81,13 +124,21 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
         });
     }
 
-    private void repeatAtInterval(){
+    private void repeatAtInterval(Appointment appointment){
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
                 final long curTime = System.currentTimeMillis();
 
                 mHandler.post(() -> {
+
+                    if(!appointment.isConfirmed()){
+                        binding.tvOnlineLeft.setText(getString(R.string.ph_string_only, "Your appointment is still"));
+                        binding.tvAvailableStatus.setText(getString(R.string.ph_string_only, "Pending"));
+                        return;
+                    }
+
+                    binding.tvOnlineLeft.setText(getString(R.string.ph_string_only, "Doctor is currently"));
                     boolean isActive = (curTime - lastTimeFromDatabase) < DoctorHomePage.UPDATE_TIME_INTERVAL;
 
                     binding.tvAvailableStatus.setText(
@@ -108,7 +159,7 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
         timer.schedule(timerTask, 0, DoctorHomePage.UPDATE_TIME_INTERVAL);
     }
 
-    private void downloadData(Appointment appointment, boolean amIDoctor){
+    private void downloadProfile(Appointment appointment, boolean amIDoctor){
         final String uid = amIDoctor ? appointment.getPatientUid() : appointment.getDoctorUid();
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(uid);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -135,6 +186,22 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
     }
 
     private void reloadButton(Appointment appointment, boolean amIDoctor){
+        if(amIDoctor){
+            binding.buttonAccept.setText(
+                    appointment.isConfirmed() ? "Join" : "Accept"
+            );
+        }
+        else{
+            if(appointment.isConfirmed()){
+                binding.buttonAccept.setVisibility(View.VISIBLE);
+                binding.buttonAccept.setText( getString(R.string.ph_string_only,"Join") );
+            }
+            else{
+                binding.buttonAccept.setVisibility(View.GONE);
+            }
+
+        }
+
         if(appointment.isConfirmed() || !amIDoctor){
             binding.buttonAccept.setVisibility(View.GONE);
         }
@@ -143,17 +210,68 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
 
     private void setClickListener(Appointment appointment, boolean amIDoctor){
         reloadButton(appointment, amIDoctor);
+
+        binding.buttonAccept.setOnClickListener(v -> {
+            if(appointment.isConfirmed()){ // join button for both doctor and patient
+                joinCall(appointment);
+                return;
+            }
+
+            if(amIDoctor){ // accept
+                acceptPatientAppointment(appointment, amIDoctor);
+            }
+
+        });
+
+        binding.buttonDelete.setOnClickListener(v -> deleteAppointment(appointment.getAppointmentId()));
+    }
+
+    private void deleteAppointment(String appointmentId){
+        new AlertDialog.Builder(this)
+                .setTitle("Delete?")
+                .setMessage("Are you sure you want to  delete this appointment?")
+                .setCancelable(true)
+                .setNegativeButton(android.R.string.cancel,null)
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("appointment").child(appointmentId);
+                    ref.removeValue().addOnSuccessListener(unused -> showSnackBar("Deleted successfully"));
+                })
+                .show();
+    }
+
+    private void joinCall(Appointment appointment){
+        showProgress();
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("token/0");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                dismissMainDialog();
+                String appId = String.valueOf(snapshot.child("appId").getValue());
+                String token = String.valueOf(snapshot.child("token").getValue());
+                String cName = String.valueOf(snapshot.child("cName").getValue());
+
+                Intent intent = new Intent(AppointmentDetailsActivity.this, VideoActivity.class);
+                intent.putExtra("doctor_uid", appointment.getDoctorUid());
+                intent.putExtra("patient_uid", appointment.getPatientUid());
+                intent.putExtra("token", token);
+                intent.putExtra("channel_name", cName);
+                intent.putExtra("app_id", appId);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                dismissMainDialog();
+            }
+        });
+    }
+
+    private void acceptPatientAppointment(Appointment appointment, boolean amIDoctor){
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("appointment").child(appointment.getAppointmentId());
-
-        binding.buttonAccept.setOnClickListener(v ->
-                ref.child("confirmed").setValue(true)
-                        .addOnSuccessListener(unused -> {
-                            appointment.setConfirmed(true);
-                            reloadButton(appointment, amIDoctor);
-                        })
-        );
-
-        binding.buttonDelete.setOnClickListener(v -> ref.removeValue().addOnSuccessListener(unused -> showSnackBar("Deleted successfully")));
+        ref.child("confirmed").setValue(true).addOnSuccessListener(unused -> {
+            appointment.setConfirmed(true);
+            reloadButton(appointment, amIDoctor);
+        });
     }
 
     private void showData(User user){
@@ -189,6 +307,24 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
         snackbar.show();
     }
 
+    public void showProgress() {
+        mainDialog = new Dialog(this);
+        mainDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        mainDialog.setContentView(R.layout.progress_bar_2);
+        Window window = mainDialog.getWindow();
+        if(window!=null) window.setBackgroundDrawableResource(android.R.color.transparent);
+        mainDialog.setCanceledOnTouchOutside(false);
+        mainDialog.setCancelable(false);
+        mainDialog.show();
+    }
+    private void dismissMainDialog(){
+        try {
+            mainDialog.dismiss();
+            mainDialog = null;
+        }catch (Exception ignored){}
+    }
+
+
     @SuppressWarnings("deprecation")
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -205,12 +341,12 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
         super.onBackPressed();
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
-    // todo add button for join call in appointment details page
 
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         timer.cancel();
+        appointmentRef.removeEventListener(appointmentListener);
     }
 }
