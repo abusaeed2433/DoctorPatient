@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
@@ -53,8 +54,9 @@ public class AppointmentAdapter extends ListAdapter<Appointment, AppointmentAdap
         holder.binding.tvName.setText( showDoctorData ? curItem.getDoctorName() : curItem.getPatientName() );
         holder.binding.tvInfo.setText( showDoctorData ? curItem.getDoctorSpeciality() : curItem.getPatientDescription() );
         holder.binding.tvTime.setText( curItem.getTime() );
-
-        holder.binding.ivDetails.setOnClickListener(v -> clickListener.onItemClick( getItem(holder.getAdapterPosition()) ));
+        holder.binding.tvType.setText( curItem.getTypeString() );
+        holder.binding.tvType.setBackgroundTintList(ContextCompat.getColorStateList(mContext, curItem.getTypeColorResId() ) );
+        holder.binding.clAppointmentHolder.setOnClickListener(v -> clickListener.onItemClick( getItem(holder.getAdapterPosition()) ));
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

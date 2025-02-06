@@ -26,7 +26,6 @@ import com.unknownn.doctorpatient.databinding.ActivityAppointmentDetailsBinding;
 import com.unknownn.doctorpatient.homepage_doctor.model.Appointment;
 import com.unknownn.doctorpatient.homepage_doctor.view.DoctorHomePage;
 import com.unknownn.doctorpatient.others.Doctor;
-import com.unknownn.doctorpatient.others.MyPopUp;
 import com.unknownn.doctorpatient.others.Patient;
 import com.unknownn.doctorpatient.others.SharedPref;
 import com.unknownn.doctorpatient.others.User;

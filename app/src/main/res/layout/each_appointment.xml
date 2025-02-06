@@ -6,11 +6,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:padding="8dp"
     android:layout_margin="4dp"
-    android:background="@drawable/gradient_back">
+    android:background="@drawable/gradient_back"
+    android:id="@+id/clAppointmentHolder">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,25 +24,62 @@
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             tools:text="08" />
 
         <TextView
             android:id="@+id/tvMonthDayName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="4dp"
             android:textColor="@color/text_color_inverse"
             android:textSize="@dimen/text_size_small"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tvDayDD"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="Oct, Sun" />
 
         <View
-            android:layout_width="match_parent"
+            android:id="@+id/view"
+            android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_marginStart="12dp"
-            android:layout_gravity="center_vertical"
-            android:background="@color/dim_white"/>
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@color/dim_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tvType"
+            app:layout_constraintStart_toEndOf="@+id/tvMonthDayName"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/tvType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/am_pm_back"
+            android:backgroundTint="@color/blue"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:layout_marginEnd="8dp"
+            android:textColor="@color/text_color_inverse"
+            android:textSize="@dimen/text_size_small"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/view_last"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Active" />
+
+        <View
+            android:id="@+id/view_last"
+            android:layout_width="24dp"
+            android:layout_height="2dp"
+            android:layout_gravity="center_vertical"
+            android:background="@color/dim_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/ivProfile"
@@ -96,14 +134,16 @@
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_gravity="center_vertical"
             android:background="@color/dim_white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/tvTime"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
 
         <TextView
             android:id="@+id/tvTime"

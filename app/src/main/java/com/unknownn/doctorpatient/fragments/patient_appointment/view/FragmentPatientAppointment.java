@@ -123,7 +123,7 @@ public class FragmentPatientAppointment extends Fragment {
 
         final String myUserId = new SharedPref(activity).getMyProfile().getUid();
 
-        Query query = FirebaseDatabase.getInstance().getReference("appointment")
+        final Query query = FirebaseDatabase.getInstance().getReference("appointment")
                 .orderByChild("patientUid").equalTo(myUserId);
 
         query.addValueEventListener(new ValueEventListener() {

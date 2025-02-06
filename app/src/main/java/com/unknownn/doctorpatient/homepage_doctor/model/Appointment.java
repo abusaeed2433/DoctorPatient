@@ -2,6 +2,7 @@ package com.unknownn.doctorpatient.homepage_doctor.model;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
+import com.unknownn.doctorpatient.R;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -157,6 +158,16 @@ public class Appointment implements Comparable<Appointment>, Serializable {
         this.patientImage = patientImage;
     }
 
+    @Exclude
+    public String getTypeString(){
+        return isConfirmed ? "Active" : "Pending";
+    }
+
+    @Exclude
+    public int getTypeColorResId(){
+        return isConfirmed ? R.color.blue : R.color.red;
+    }
+
     private transient String dateDD = null;
     private transient String dateMmDayName = null;
 
@@ -204,7 +215,7 @@ public class Appointment implements Comparable<Appointment>, Serializable {
 
     @Exclude
     public boolean conditionalEqual(Appointment item, boolean showDoctorData){
-        if( !time.equals(item.time) || !date.equals(item.date)) return false;
+        if( !time.equals(item.time) || !date.equals(item.date) || (isConfirmed != item.isConfirmed)) return false;
 
         if(showDoctorData){
             return Objects.equals(doctorName,item.doctorName) &&
