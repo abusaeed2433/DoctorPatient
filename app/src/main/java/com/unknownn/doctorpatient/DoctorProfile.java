@@ -19,7 +19,6 @@ import com.bumptech.glide.Glide;
 import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -150,7 +149,7 @@ public class DoctorProfile extends AppCompatActivity {
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user == null){
             isProcessing = false;
-            showAlertDialog("Error occurred", getString(R.string.you_are_not_signed_in));
+            showAlertDialog(getString(R.string.you_are_not_signed_in));
             return;
         }
 
@@ -176,12 +175,12 @@ public class DoctorProfile extends AppCompatActivity {
                                 .addOnFailureListener(e -> {
                                     isProcessing = false;
                                     dismissMainDialog();
-                                    showAlertDialog("Error occurred", e.getMessage());
+                                    showAlertDialog(e.getMessage());
                                 }))
                 .addOnFailureListener(e -> {
                     isProcessing = false;
                     dismissMainDialog();
-                    showAlertDialog("Error occurred", e.getMessage());
+                    showAlertDialog(e.getMessage());
                 });
     }
 
@@ -206,7 +205,7 @@ public class DoctorProfile extends AppCompatActivity {
                 dismissMainDialog();
                 final Exception exception = task.getException();
                 final String message = (exception == null) ? getString(R.string.something_went_wrong) : exception.getMessage();
-                showAlertDialog("Error occurred", message);
+                showAlertDialog(message);
             }
         });
     }
@@ -214,7 +213,7 @@ public class DoctorProfile extends AppCompatActivity {
     private void loadFromDatabase(){
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user == null){
-            showAlertDialog("Error occurred", getString(R.string.you_are_not_signed_in));
+            showAlertDialog(getString(R.string.you_are_not_signed_in));
             return;
         }
 
@@ -239,8 +238,8 @@ public class DoctorProfile extends AppCompatActivity {
         });
     }
 
-    private void showAlertDialog(String title, String message) {
-        MyPopUp myPopUp = new MyPopUp(this, title, message);
+    private void showAlertDialog(String message) {
+        MyPopUp myPopUp = new MyPopUp(this, "Error occurred", message);
         myPopUp.setCancelable(false);
         myPopUp.setClickListener("Dismiss",null);
         myPopUp.show();
@@ -330,12 +329,6 @@ public class DoctorProfile extends AppCompatActivity {
         }catch (Exception ignored){}
     }
 
-    private void showSnackBar(String message){
-        Snackbar snackbar = Snackbar.make(findViewById(R.id.cl_profile_root),message,Snackbar.LENGTH_LONG);
-        snackbar.setAction(android.R.string.ok, v -> snackbar.dismiss());
-        snackbar.show();
-    }
-
     public void showProgress() {
         mainDialog = new Dialog(this);
         mainDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -353,6 +346,7 @@ public class DoctorProfile extends AppCompatActivity {
         try { mainDialog.dismiss(); }catch (Exception ignored){}
     }
 
+    @SuppressWarnings("deprecation")
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             super.onBackPressed();

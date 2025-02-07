@@ -41,7 +41,7 @@
     <string name="your_height_is">Your height is:</string>
     <string name="feet">feet</string>
     <string name="inch">inch</string>
-    <string name="save">save</string>
+    <string name="save">Save</string>
     <string name="disease_description">Disease description</string>
     <string name="your_wight">Your weight(kg)</string>
     <string name="_0">0</string>
@@ -88,4 +88,6 @@
     <string name="no_chats_found">No chats found</string>
     <string name="chat">Chat</string>
     <string name="processing_your_request">Processing your request...</string>
+    <string name="full_name">Full Name</string>
+    <string name="your_height">Your height</string>
 </resources>
