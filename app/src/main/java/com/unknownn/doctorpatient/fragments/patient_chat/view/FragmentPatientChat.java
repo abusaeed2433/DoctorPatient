@@ -66,7 +66,7 @@ public class FragmentPatientChat extends Fragment {
         if(activity == null) return;
 
         final String patUid = new SharedPref(activity).getMyProfile().getUid();
-        final Query query = FirebaseDatabase.getInstance().getReference("chats")
+        final Query query = FirebaseDatabase.getInstance().getReference("chat_heads")
                 .orderByKey()
                 .endAt(patUid);
 

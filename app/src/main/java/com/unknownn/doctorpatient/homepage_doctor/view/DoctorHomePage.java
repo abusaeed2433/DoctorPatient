@@ -86,7 +86,7 @@ public class DoctorHomePage extends AppCompatActivity {
         final String myUserId = getSp().getMyProfile().getUid();
 
         Query query = FirebaseDatabase.getInstance().getReference("appointment")
-                .orderByChild("patientUid").equalTo(myUserId);
+                .orderByChild("doctorUid").equalTo(myUserId);
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -300,7 +300,7 @@ public class DoctorHomePage extends AppCompatActivity {
     }
 
     private void updateTime(DatabaseReference ref, DataListener listener){
-        if(inPauseState) { // won't update but loop will run
+        if(inPauseState) { // won't update but loop will run. update
             listener.onDataSaved(true);
         }
         else{
@@ -376,7 +376,7 @@ public class DoctorHomePage extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        inPauseState = true;
+        //inPauseState = true;
     }
 
     @Override

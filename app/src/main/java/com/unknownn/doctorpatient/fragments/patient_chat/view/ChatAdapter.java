@@ -52,6 +52,8 @@ public class ChatAdapter extends ListAdapter<EachChat, ChatAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        curItem = getItem(position);
+
         Glide.with(mContext)
                 .load(amIDoctor ? curItem.getPatientPic() : curItem.getDoctorPic())
                 .timeout(30*1000)

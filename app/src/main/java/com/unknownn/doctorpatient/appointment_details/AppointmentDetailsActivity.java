@@ -200,11 +200,6 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
             }
 
         }
-
-        if(appointment.isConfirmed() || !amIDoctor){
-            binding.buttonAccept.setVisibility(View.GONE);
-        }
-        binding.llButtonHolder.setVisibility(View.VISIBLE);
     }
 
     private void setClickListener(Appointment appointment, boolean amIDoctor){
