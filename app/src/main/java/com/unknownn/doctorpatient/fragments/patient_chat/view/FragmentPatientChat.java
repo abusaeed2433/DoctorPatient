@@ -1,11 +1,14 @@
 package com.unknownn.doctorpatient.fragments.patient_chat.view;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,15 +20,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.unknownn.doctorpatient.R;
+import com.unknownn.doctorpatient.chat_page.view.ChatActivity;
 import com.unknownn.doctorpatient.databinding.FragmentPatientChatBinding;
 import com.unknownn.doctorpatient.fragments.patient_chat.model.EachChat;
-import com.unknownn.doctorpatient.others.ItemClickListener;
 import com.unknownn.doctorpatient.others.SharedPref;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.security.auth.callback.CallbackHandler;
 
 public class FragmentPatientChat extends Fragment {
 
@@ -52,12 +53,23 @@ public class FragmentPatientChat extends Fragment {
         Activity activity = getActivity();
         if(activity == null) return;
 
-        chatAdapter = new ChatAdapter(activity, false, new ItemClickListener<EachChat>() {
-            @Override
-            public void onItemClick(EachChat item) {
-                // todo open chatting page
-            }
+        chatAdapter = new ChatAdapter(activity, false, item -> {
+            Intent intent = new Intent(activity, ChatActivity.class);
+            intent.putExtra("each_chat", item);
+            startActivity(intent);
+            activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         });
+
+        boolean isLargeDevice = getResources().getBoolean(R.bool.isLargeDevice);
+        binding.rvChat.setLayoutManager(
+                new GridLayoutManager(
+                        activity,
+                        (isLargeDevice ? 2 : 1),
+                        RecyclerView.VERTICAL,
+                        false
+                )
+        );
+
         binding.rvChat.setAdapter(chatAdapter);
     }
 
@@ -92,6 +104,7 @@ public class FragmentPatientChat extends Fragment {
     }
 
     private void updateAdapter(List<EachChat> chatList){
+        chatList.sort((o1, o2) -> Long.compare(o2.getLastMessageTime(), o1.getLastMessageTime()));
         binding.progressBar.setVisibility(View.GONE);
 
         if(chatList.isEmpty()){

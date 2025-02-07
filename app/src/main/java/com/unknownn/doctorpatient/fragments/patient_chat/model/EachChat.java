@@ -2,8 +2,14 @@ package com.unknownn.doctorpatient.fragments.patient_chat.model;
 
 import com.google.firebase.database.Exclude;
 
-public class EachChat {
+import java.io.Serializable;
+import java.util.Objects;
+
+public class EachChat implements Serializable {
     private String id;
+
+    private String doctorUid;
+    private String patientUid;
     private String doctorName;
     private String patientName;
     private String doctorPic;
@@ -14,14 +20,32 @@ public class EachChat {
     public EachChat() {
     }
 
-    public EachChat(String id, String doctorName, String patientName, String doctorPic, String patientPic, String lastMessage, long lastMessageTime) {
+    public EachChat(String id, String doctorUid, String patientUid, String doctorName, String patientName, String doctorPic, String patientPic, String lastMessage, long lastMessageTime) {
         this.id = id;
+        this.doctorUid = doctorUid;
+        this.patientUid = patientUid;
         this.doctorName = doctorName;
         this.patientName = patientName;
         this.doctorPic = doctorPic;
         this.patientPic = patientPic;
         this.lastMessage = lastMessage;
         this.lastMessageTime = lastMessageTime;
+    }
+
+    public String getDoctorUid() {
+        return doctorUid;
+    }
+
+    public void setDoctorUid(String doctorUid) {
+        this.doctorUid = doctorUid;
+    }
+
+    public String getPatientUid() {
+        return patientUid;
+    }
+
+    public void setPatientUid(String patientUid) {
+        this.patientUid = patientUid;
     }
 
     public String getId() {
@@ -83,12 +107,12 @@ public class EachChat {
     @Exclude
     public boolean fullyEquals(EachChat item){
 
-        return doctorName.equals(item.doctorName) &&
-                patientName.equals(item.patientName) &&
-                doctorPic.equals(item.doctorPic) &&
-                patientPic.equals(item.patientPic) &&
-                lastMessage.equals(item.lastMessage) &&
-                lastMessageTime == item.lastMessageTime;
+        return Objects.equals(doctorName,item.doctorName) &&
+                Objects.equals(patientName,item.patientName) &&
+                Objects.equals(doctorPic,item.doctorPic) &&
+                Objects.equals(patientPic,item.patientPic) &&
+                Objects.equals(lastMessage,item.lastMessage) &&
+                Objects.equals(lastMessageTime,item.lastMessageTime);
     }
 
 }

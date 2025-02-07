@@ -22,14 +22,20 @@
         android:roundIcon="@mipmap/ic_launcher_foreground"
         android:supportsRtl="true"
         android:theme="@style/Theme.DoctorPatient">
+
+        <activity
+            android:name=".chat_page.view.ChatActivity"
+            android:exported="false"
+            android:parentActivityName=".homepage_patient.view.PatientHomePage"/>
+
         <activity
             android:name=".book_appointment.view.BookAppointmentActivity"
             android:exported="false"
-            android:parentActivityName=".homepage_patient.view.PatientHomePage"/>
+            android:parentActivityName=".homepage_patient.view.PatientHomePage" />
         <activity
             android:name=".appointment_details.AppointmentDetailsActivity"
             android:exported="false"
-            android:parentActivityName=".homepage_patient.view.PatientHomePage"/>
+            android:parentActivityName=".homepage_patient.view.PatientHomePage" />
         <activity
             android:name=".DoctorProfile"
             android:exported="false"

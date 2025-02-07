@@ -309,6 +309,7 @@ public class PatientProfile extends AppCompatActivity {
         try { mainDialog.dismiss(); }catch (Exception ignored){}
     }
 
+    @SuppressWarnings("deprecation")
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             super.onBackPressed();
@@ -318,6 +319,7 @@ public class PatientProfile extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onBackPressed() {
         super.onBackPressed();
