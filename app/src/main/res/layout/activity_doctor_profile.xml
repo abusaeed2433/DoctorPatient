@@ -204,15 +204,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:layout_margin="4dp"
                         android:orientation="horizontal"
                         app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView4"
                         app:reverseLayout="false"
-                        app:spanCount="3"
-                        tools:itemCount="9"
+                        tools:itemCount="6"
                         tools:listitem="@layout/each_speciality_design" />
 
                 </LinearLayout>
@@ -236,9 +234,9 @@
                     android:background="@drawable/shadow_back_down"
                     android:hint="@string/about_yourself"
                     android:importantForAutofill="no"
-                    android:lines="3"
+                    android:minLines="3"
+                    android:maxLines="12"
                     android:inputType="textMultiLine"
-                    android:minHeight="40dp"
                     android:padding="8dp"
                     android:textColor="@color/text_color"
                     android:textSize="@dimen/text_size_medium" />

@@ -75,11 +75,11 @@ public class Doctor extends User implements Serializable {
         final StringBuilder builder = new StringBuilder();
         List<Speciality> list = getAllSpecialities();
         for(Speciality sp : list){
-            builder.append(sp.category).append("|");
+            builder.append(sp.category).append(" | ");
         }
         if(builder.length() <= 0 ) return null;
 
-        return builder.deleteCharAt(builder.length()-1).toString();
+        return builder.delete(builder.length()-3, builder.length()).toString();
     }
 
     @Exclude

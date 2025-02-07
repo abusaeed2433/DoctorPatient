@@ -277,8 +277,8 @@
                     android:hint="@string/disease_description"
                     android:importantForAutofill="no"
                     android:inputType="textMultiLine"
-                    android:lines="3"
-                    android:minHeight="40dp"
+                    android:minLines="3"
+                    android:maxLines="12"
                     android:padding="8dp"
                     android:textColor="@color/text_color"
                     android:textSize="@dimen/text_size_medium" />

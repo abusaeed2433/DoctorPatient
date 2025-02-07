@@ -5,11 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum Speciality {
-    ALL("All", "https://i.postimg.cc/MKCQtqGB/cardiologist.png"),
-    DENTIST("Dentist","https://i.postimg.cc/MKCQtqGB/cardiologist.png"),
-    MEDICINE("Medicine","https://i.postimg.cc/ZYD3BrtV/dentist.png"),
-    CARDIOLOGIST("Cardiologist","https://i.postimg.cc/YqGF1htk/medicine.png"),
-    HUDAI("Hudai", "https://i.postimg.cc/JzjB2vy2/sarcastic.png")
+    ALL("All", "https://i.postimg.cc/L5q2LZ2J/medicine.png"), // medicine
+    DERMATOLOGY("Dermatology","https://i.postimg.cc/x1Lj6HHH/dermatology.png"),
+    NEUROSURGERY("Neurosurgery","https://i.postimg.cc/FRChYx5t/neurosurgery.png"),
+    OPHTHALMOLOGY("Ophthalmology","https://i.postimg.cc/fLRwWrPj/ophtalmology.png"),
+    PEDIATRICS("Pediatrics", "https://i.postimg.cc/W4nNvv51/pediatrics.png"),
+    VIROLOGY("Virology", "https://i.postimg.cc/0NxkFQd4/virology.png")
     ;
 
     public static List<Speciality> getAll(){

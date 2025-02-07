@@ -68,7 +68,7 @@ public class FragmentPatientAppointment extends Fragment {
                 return oldItem.conditionalEqual(newItem, false);
             }
         };
-        appointmentAdapter = new AppointmentAdapter(activity, false, diffCallback, this::openDetailsPage);
+        appointmentAdapter = new AppointmentAdapter(activity, true, diffCallback, this::openDetailsPage);
 
         binding.rvAppointment.setAdapter(appointmentAdapter);
     }

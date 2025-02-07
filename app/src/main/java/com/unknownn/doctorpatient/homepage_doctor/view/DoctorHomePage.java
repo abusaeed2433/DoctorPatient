@@ -33,12 +33,13 @@ import com.unknownn.doctorpatient.CreateAccount;
 import com.unknownn.doctorpatient.DoctorProfile;
 import com.unknownn.doctorpatient.R;
 import com.unknownn.doctorpatient.appointment_details.AppointmentDetailsActivity;
-import com.unknownn.doctorpatient.chat_page.view.ChatActivity;
 import com.unknownn.doctorpatient.databinding.ActivityHomepageBinding;
 import com.unknownn.doctorpatient.doctor_chat_list.view.DoctorChatListActivity;
 import com.unknownn.doctorpatient.homepage_doctor.model.Appointment;
 import com.unknownn.doctorpatient.others.Doctor;
+import com.unknownn.doctorpatient.others.Patient;
 import com.unknownn.doctorpatient.others.SharedPref;
+import com.unknownn.doctorpatient.others.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -341,7 +342,10 @@ public class DoctorHomePage extends AppCompatActivity {
             map.put("lastOnlineTime",ServerValue.TIMESTAMP);
             map.put("inCall",false);
 
-            Doctor doctor = (Doctor)getSp().getMyProfile();
+            User user = getSp().getMyProfile();
+            if(user instanceof Patient) return;
+
+            Doctor doctor = (Doctor)user;
             map.put("speciality",doctor.getDescription());
             map.put("imageUrl",doctor.getImageUrl());
 

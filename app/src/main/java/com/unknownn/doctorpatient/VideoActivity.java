@@ -324,7 +324,9 @@ public class VideoActivity extends AppCompatActivity {
             // By default, the video module is disabled, call enableVideo to enable it.
             agoraEngine.enableVideo();
         } catch (Exception e) {
+            System.out.println("Error is "+e.getMessage());
             showMessage(e.toString());
+            finish();
         }
     }
 
@@ -377,6 +379,8 @@ public class VideoActivity extends AppCompatActivity {
             options.clientRoleType = Constants.CLIENT_ROLE_BROADCASTER;
 
             // Display LocalSurfaceView.
+            if(agoraEngine == null) return;
+
             setupLocalVideo();
             localSurfaceView.setVisibility(View.VISIBLE);
             // Start local preview.
@@ -726,4 +730,5 @@ public class VideoActivity extends AppCompatActivity {
         }catch (Exception ignored){}
     }
 
+    //todo take the edit text at top as before. Because bottom is being hidden by keyboard
 }

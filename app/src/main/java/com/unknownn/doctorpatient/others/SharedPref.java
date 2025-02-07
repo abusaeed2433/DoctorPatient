@@ -45,7 +45,7 @@ public class SharedPref {
 
             return new Patient(uid, intId, name, age, weight, gender, heightFt, heightIn, desc,imageUrl);
         }
-        else{
+        else {
             final String speciality = spProfile.getString("speciality", null);
             final int experienceInMonth = spProfile.getInt("experience_in_month",-1);
             final String specialitites = spProfile.getString("specialitites",null);

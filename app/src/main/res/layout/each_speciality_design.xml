@@ -14,7 +14,10 @@
         android:layout_height="wrap_content"
         android:background="@drawable/speciality_back"
         android:orientation="horizontal"
-        android:padding="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,9 +25,10 @@
 
         <ImageView
             android:id="@+id/specialty_icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="8dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="4dp"
+            android:layout_gravity="center_vertical"
             android:contentDescription="@string/icon_only"
             android:src="@drawable/dentist" />
 
@@ -35,8 +39,9 @@
             android:layout_marginEnd="4dp"
             android:fontFamily="sans-serif-medium"
             android:gravity="center_vertical"
+            android:layout_gravity="center_vertical"
             android:textColor="@android:color/black"
-            android:textSize="18sp"
+            android:textSize="@dimen/text_size"
             tools:text="Dentist" />
     </LinearLayout>
 

@@ -22,39 +22,60 @@
         android:roundIcon="@mipmap/ic_launcher_foreground"
         android:supportsRtl="true"
         android:theme="@style/Theme.DoctorPatient">
+
         <activity
             android:name=".doctor_chat_list.view.DoctorChatListActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity"
             android:parentActivityName=".homepage_patient.view.PatientHomePage"/>
+
         <activity
             android:name=".chat_page.view.ChatActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity"
             android:parentActivityName=".homepage_patient.view.PatientHomePage" />
+
         <activity
             android:name=".book_appointment.view.BookAppointmentActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity"
             android:parentActivityName=".homepage_patient.view.PatientHomePage" />
+
         <activity
             android:name=".appointment_details.AppointmentDetailsActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity"
             android:parentActivityName=".homepage_patient.view.PatientHomePage" />
+
         <activity
             android:name=".DoctorProfile"
             android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity"
             android:parentActivityName=".homepage_doctor.view.DoctorHomePage" />
+
         <activity
             android:name=".PatientProfile"
             android:exported="false"
-            android:parentActivityName=".homepage_doctor.view.DoctorHomePage">
+            android:parentActivityName=".homepage_doctor.view.DoctorHomePage"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
         <activity
             android:name=".StartingPage"
             android:exported="true"
             android:noHistory="true"
-            android:theme="@style/fullScreenActivity">
+            android:theme="@style/fullScreenActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -65,37 +86,48 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
         <activity
             android:name=".VideoActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustNothing"
-            tools:ignore="LockedOrientationActivity">
+            tools:ignore="DiscouragedApi,LockedOrientationActivity"
+            android:windowSoftInputMode="adjustNothing">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
         <activity
             android:name=".CreateAccount"
-            android:exported="false">
+            android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
         <activity
             android:name=".homepage_doctor.view.DoctorHomePage"
-            android:exported="false">
+            android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
         <activity
             android:name=".homepage_patient.view.PatientHomePage"
-            android:exported="false">
+            android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
     </application>
 
 </manifest>
