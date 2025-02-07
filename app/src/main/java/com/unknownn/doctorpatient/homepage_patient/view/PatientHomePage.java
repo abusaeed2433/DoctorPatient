@@ -34,11 +34,10 @@ import com.unknownn.doctorpatient.CreateAccount;
 import com.unknownn.doctorpatient.PatientProfile;
 import com.unknownn.doctorpatient.R;
 import com.unknownn.doctorpatient.VideoActivity;
-import com.unknownn.doctorpatient.adapter.AvAdapter;
 import com.unknownn.doctorpatient.adapter.PagerAdapter;
 import com.unknownn.doctorpatient.databinding.ActivityPatientHomepageBinding;
 import com.unknownn.doctorpatient.fragments.patient_appointment.view.FragmentPatientAppointment;
-import com.unknownn.doctorpatient.fragments.patient_chat.view.FragmentPatientChat;
+import com.unknownn.doctorpatient.fragments.chat_list.view.FragmentChatList;
 import com.unknownn.doctorpatient.fragments.patient_home.view.FragmentPatientHome;
 import com.unknownn.doctorpatient.homepage_doctor.model.Appointment;
 import com.unknownn.doctorpatient.others.AvDoctor;
@@ -77,7 +76,7 @@ public class PatientHomePage extends AppCompatActivity {
         List<Fragment> list = new ArrayList<>();
         list.add(new FragmentPatientHome());
         list.add(new FragmentPatientAppointment());
-        list.add(new FragmentPatientChat());
+        list.add(new FragmentChatList());
 
         FragmentStateAdapter fSAdapter = new PagerAdapter(this,list);
         binding.viewPager.setOffscreenPageLimit(list.size());

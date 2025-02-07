@@ -1,4 +1,4 @@
-package com.unknownn.doctorpatient.fragments.patient_chat.view;
+package com.unknownn.doctorpatient.fragments.chat_list.view;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -22,13 +22,13 @@ import com.google.firebase.database.ValueEventListener;
 import com.unknownn.doctorpatient.R;
 import com.unknownn.doctorpatient.chat_page.view.ChatActivity;
 import com.unknownn.doctorpatient.databinding.FragmentPatientChatBinding;
-import com.unknownn.doctorpatient.fragments.patient_chat.model.EachChat;
+import com.unknownn.doctorpatient.fragments.chat_list.model.EachChat;
 import com.unknownn.doctorpatient.others.SharedPref;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FragmentPatientChat extends Fragment {
+public class FragmentChatList extends Fragment {
 
 
     private ChatAdapter chatAdapter = null;
@@ -53,7 +53,9 @@ public class FragmentPatientChat extends Fragment {
         Activity activity = getActivity();
         if(activity == null) return;
 
-        chatAdapter = new ChatAdapter(activity, false, item -> {
+        final boolean amIDoctor = new SharedPref(activity).getMyProfile().isAmIDoctor();
+
+        chatAdapter = new ChatAdapter(activity, amIDoctor, item -> {
             Intent intent = new Intent(activity, ChatActivity.class);
             intent.putExtra("each_chat", item);
             startActivity(intent);
@@ -77,10 +79,13 @@ public class FragmentPatientChat extends Fragment {
         final Activity activity = getActivity();
         if(activity == null) return;
 
-        final String patUid = new SharedPref(activity).getMyProfile().getUid();
-        final Query query = FirebaseDatabase.getInstance().getReference("chat_heads")
-                .orderByKey()
-                .endAt(patUid);
+        final String myUid = new SharedPref(activity).getMyProfile().getUid();
+        final boolean amIDoctor = new SharedPref(activity).getMyProfile().isAmIDoctor();
+
+        Query query = FirebaseDatabase.getInstance().getReference("chat_heads")
+                .orderByChild(
+                        amIDoctor ? "doctorUid" : "patientUid"
+                ).equalTo(myUid);
 
         query.addValueEventListener(new ValueEventListener() {
             @Override

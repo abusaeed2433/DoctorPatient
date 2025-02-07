@@ -1,4 +1,4 @@
-package com.unknownn.doctorpatient.fragments.patient_chat.model;
+package com.unknownn.doctorpatient.fragments.chat_list.model;
 
 import com.google.firebase.database.Exclude;
 

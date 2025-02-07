@@ -1,4 +1,4 @@
-package com.unknownn.doctorpatient.fragments.patient_chat.view;
+package com.unknownn.doctorpatient.fragments.chat_list.view;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.unknownn.doctorpatient.R;
 import com.unknownn.doctorpatient.databinding.EachChatItemBinding;
-import com.unknownn.doctorpatient.fragments.patient_chat.model.EachChat;
+import com.unknownn.doctorpatient.fragments.chat_list.model.EachChat;
 import com.unknownn.doctorpatient.others.ItemClickListener;
 
 public class ChatAdapter extends ListAdapter<EachChat, ChatAdapter.ViewHolder> {

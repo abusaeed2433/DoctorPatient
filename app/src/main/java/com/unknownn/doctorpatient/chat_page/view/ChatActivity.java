@@ -31,7 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.unknownn.doctorpatient.R;
 import com.unknownn.doctorpatient.adapter.MessageAdapter;
 import com.unknownn.doctorpatient.databinding.ActivityChatBinding;
-import com.unknownn.doctorpatient.fragments.patient_chat.model.EachChat;
+import com.unknownn.doctorpatient.fragments.chat_list.model.EachChat;
 import com.unknownn.doctorpatient.others.EachMessage;
 import com.unknownn.doctorpatient.others.FileListener;
 import com.unknownn.doctorpatient.others.FileUploader;

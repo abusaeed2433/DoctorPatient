@@ -26,7 +26,6 @@ import com.unknownn.doctorpatient.R;
 import com.unknownn.doctorpatient.adapter.AvAdapter;
 import com.unknownn.doctorpatient.appointment_details.AppointmentDetailsActivity;
 import com.unknownn.doctorpatient.book_appointment.view.BookAppointmentActivity;
-import com.unknownn.doctorpatient.databinding.ActivityPatientHomepageBinding;
 import com.unknownn.doctorpatient.databinding.FragmentHomeBinding;
 import com.unknownn.doctorpatient.enums.Speciality;
 import com.unknownn.doctorpatient.homepage_doctor.model.Appointment;
@@ -34,7 +33,6 @@ import com.unknownn.doctorpatient.homepage_patient.view.PatientHomePage;
 import com.unknownn.doctorpatient.others.Doctor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -66,7 +64,7 @@ public class FragmentPatientHome extends Fragment {
 
                     binding.tvDayDD.setText( curItem.getDayDD() );
                     binding.tvMonthDayName.setText( curItem.getDateMmDayName() );
-                    Glide.with(activity)
+                    Glide.with(activity.getBaseContext())
                             .load(curItem.getDoctorImage())
                             .timeout(30*1000)
                             .placeholder(R.drawable.doctor_icon)

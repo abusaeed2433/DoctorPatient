@@ -33,7 +33,9 @@ import com.unknownn.doctorpatient.CreateAccount;
 import com.unknownn.doctorpatient.DoctorProfile;
 import com.unknownn.doctorpatient.R;
 import com.unknownn.doctorpatient.appointment_details.AppointmentDetailsActivity;
+import com.unknownn.doctorpatient.chat_page.view.ChatActivity;
 import com.unknownn.doctorpatient.databinding.ActivityHomepageBinding;
+import com.unknownn.doctorpatient.doctor_chat_list.view.DoctorChatListActivity;
 import com.unknownn.doctorpatient.homepage_doctor.model.Appointment;
 import com.unknownn.doctorpatient.others.Doctor;
 import com.unknownn.doctorpatient.others.SharedPref;
@@ -57,6 +59,7 @@ public class DoctorHomePage extends AppCompatActivity {
     private String appointmentType = "All";
     private ActivityHomepageBinding binding = null;
     private AppointmentAdapter appointmentAdapter;
+    private final List<Appointment> appointmentList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,8 +115,32 @@ public class DoctorHomePage extends AppCompatActivity {
     private void updateAdapter(List<Appointment> list){
         binding.pbHomepage.setVisibility(View.GONE);
 
+        this.appointmentList.clear();
+        this.appointmentList.addAll(list);
+
+        filterAndSubmit();
+    }
+
+    private void filterAndSubmit(){
+
+        final List<Appointment> list = new ArrayList<>();
+        for(Appointment app : this.appointmentList){
+            switch (appointmentType.toLowerCase()){
+                case "all":
+                    list.add(app);
+                    break;
+                case "active":
+                    if(app.isConfirmed())
+                        list.add(app);
+                    break;
+                case "pending":
+                    if(!app.isConfirmed())
+                        list.add(app);
+            }
+        }
+
         if(list.isEmpty()){
-            binding.tvMessage.setText( getString(R.string.ph_string_only, "No appointment available.\nWe will let you know as soon as any patient contact") );
+            binding.tvMessage.setText( getString(R.string.ph_string_only, "No appointment available") );
             binding.tvMessage.setVisibility(View.VISIBLE);
         }
         else{
@@ -150,6 +177,7 @@ public class DoctorHomePage extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 appointmentType = (position == 0) ? "All" : (position == 1) ? "Active" : "Pending";
+                filterAndSubmit();
             }
 
             @Override
@@ -195,7 +223,7 @@ public class DoctorHomePage extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.action_bar_menu, menu);
+        inflater.inflate(R.menu.action_bar_menu_for_doctor, menu);
         return true;
     }
 
@@ -208,7 +236,12 @@ public class DoctorHomePage extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
-        if(id == R.id.bar_profile){
+        if(id == R.id.bar_chat){
+            Intent intent = new Intent(this, DoctorChatListActivity.class);
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        }
+        else if(id == R.id.bar_profile){
             Intent intent = new Intent(DoctorHomePage.this, DoctorProfile.class);
             startActivity(intent);
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
