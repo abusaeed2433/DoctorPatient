@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 
 import androidx.annotation.NonNull;
@@ -306,7 +307,10 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
         mainDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         mainDialog.setContentView(R.layout.progress_bar_2);
         Window window = mainDialog.getWindow();
-        if(window!=null) window.setBackgroundDrawableResource(android.R.color.transparent);
+        if(window != null) {
+            window.setBackgroundDrawableResource(android.R.color.transparent);
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
         mainDialog.setCanceledOnTouchOutside(false);
         mainDialog.setCancelable(false);
         mainDialog.show();

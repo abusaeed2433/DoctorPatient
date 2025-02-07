@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Toast;
 
@@ -47,6 +48,7 @@ public class CreateAccount extends AppCompatActivity {
     private static final int PERMISSION_REQ_ID = 22;
     private static final String[] REQUESTED_PERMISSIONS = { Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA };
 
+    @SuppressWarnings("deprecation")
     private GoogleSignInClient client;
     private ActivityResultLauncher<Intent> mGetContent;
     private FirebaseAuth mAuth;
@@ -75,8 +77,8 @@ public class CreateAccount extends AppCompatActivity {
                 ContextCompat.checkSelfPermission(this, REQUESTED_PERMISSIONS[1]) == PackageManager.PERMISSION_GRANTED;
     }
 
-    private void showSnackBar(String message){
-        Snackbar snackbar = Snackbar.make(binding.rlRoot,message,Snackbar.LENGTH_LONG);
+    private void showSnackBar(){
+        Snackbar snackbar = Snackbar.make(binding.rlRoot, "Select your profession",Snackbar.LENGTH_LONG);
         snackbar.show();
     }
 
@@ -99,6 +101,7 @@ public class CreateAccount extends AppCompatActivity {
     /**
      * mGetContent is initialized here for signIn result
      */
+    @SuppressWarnings("deprecation")
     private void startCallBack(){
         mGetContent = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if(result != null){
@@ -109,7 +112,7 @@ public class CreateAccount extends AppCompatActivity {
                     connectToFirebase(account);
                 }
                 catch (ApiException e) {
-                    showAlertDialog("Error occurred", getString(R.string.something_went_wrong)+":"+e.getMessage());
+                    showAlertDialog(getString(R.string.something_went_wrong)+":"+e.getMessage());
                     //binding.tvSignInMessage.setText(e.getMessage());
                 }
             }
@@ -117,13 +120,14 @@ public class CreateAccount extends AppCompatActivity {
 
     }
 
-    private void showAlertDialog(String title, String message) {
-        MyPopUp myPopUp = new MyPopUp(this, title, message);
+    private void showAlertDialog(String message) {
+        MyPopUp myPopUp = new MyPopUp(this, "Error occurred", message);
         myPopUp.setCancelable(false);
         myPopUp.setClickListener("Dismiss",null);
         myPopUp.show();
     }
 
+    @SuppressWarnings("deprecation")
     private void connectToFirebase(GoogleSignInAccount acct) {
         showProgress();
 
@@ -138,7 +142,7 @@ public class CreateAccount extends AppCompatActivity {
                     else {
                         dismissMainDialog();
                         showMessageInTV(null);
-                        showAlertDialog("Error occurred", "Something went wrong. Try again later.(auth error)");
+                        showAlertDialog("Something went wrong. Try again later.(auth error)");
                     }
                 });
     }
@@ -147,7 +151,7 @@ public class CreateAccount extends AppCompatActivity {
         if(mAuth == null){
             showMessageInTV(null);
             dismissMainDialog();
-            showAlertDialog("Error occurred","Something went wrong. Retry later");
+            showAlertDialog("Something went wrong. Retry later");
             return;
         }
 
@@ -155,7 +159,7 @@ public class CreateAccount extends AppCompatActivity {
         if(user == null){
             showMessageInTV(null);
             dismissMainDialog();
-            showAlertDialog("Error occurred","Failed to generate id. Retry later");
+            showAlertDialog("Failed to generate id. Retry later");
             return;
         }
 
@@ -168,7 +172,7 @@ public class CreateAccount extends AppCompatActivity {
                 if(snapshot.exists()){
                     final Boolean isDoctor = snapshot.child("amIDoctor").getValue(Boolean.class);
                     if(isDoctor == null){
-                        showAlertDialog("Error occurred", "Unknown error occurred. Contact your developer");
+                        showAlertDialog("Unknown error occurred. Contact your developer");
                         dismissMainDialog();
                         return;
                     }
@@ -188,7 +192,7 @@ public class CreateAccount extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 dismissMainDialog();
-                showAlertDialog("Error occurred",error.getMessage());
+                showAlertDialog(error.getMessage());
             }
         });
 
@@ -222,6 +226,7 @@ public class CreateAccount extends AppCompatActivity {
         return sp;
     }
 
+    @SuppressWarnings("deprecation")
     private void createRequest(){
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -238,7 +243,7 @@ public class CreateAccount extends AppCompatActivity {
         }
 
         if(isDoctor == null){
-            showSnackBar("Select your profession");
+            showSnackBar();
             return;
         }
 
@@ -259,6 +264,7 @@ public class CreateAccount extends AppCompatActivity {
         }catch (Exception ignored){}
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -269,6 +275,7 @@ public class CreateAccount extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onBackPressed() {
         if(mainDialog != null){
@@ -289,7 +296,10 @@ public class CreateAccount extends AppCompatActivity {
         mainDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         mainDialog.setContentView(R.layout.progress_bar_2);
         Window window = mainDialog.getWindow();
-        if(window!=null) window.setBackgroundDrawableResource(android.R.color.transparent);
+        if(window != null) {
+            window.setBackgroundDrawableResource(android.R.color.transparent);
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
         mainDialog.setCanceledOnTouchOutside(false);
         mainDialog.setCancelable(false);
         mainDialog.show();

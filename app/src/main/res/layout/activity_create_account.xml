@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".CreateAccount"
+    android:background="@drawable/create_account_back"
     android:id="@+id/rlRoot">
 
     <ProgressBar
@@ -45,7 +46,6 @@
             android:layout_height="wrap_content"
             android:paddingStart="16dp"
             android:paddingEnd="4dp"
-            android:background="@color/very_dim_white"
             android:padding="8dp"
             android:fontFamily="sans-serif-condensed-medium"
             android:layout_gravity="center"
@@ -85,7 +85,6 @@
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-
             app:layout_constraintStart_toEndOf="@+id/rl_p"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent=".3">

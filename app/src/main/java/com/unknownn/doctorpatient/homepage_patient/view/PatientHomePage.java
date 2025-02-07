@@ -40,8 +40,6 @@ import com.unknownn.doctorpatient.fragments.patient_appointment.view.FragmentPat
 import com.unknownn.doctorpatient.fragments.chat_list.view.FragmentChatList;
 import com.unknownn.doctorpatient.fragments.patient_home.view.FragmentPatientHome;
 import com.unknownn.doctorpatient.homepage_doctor.model.Appointment;
-import com.unknownn.doctorpatient.others.AvDoctor;
-import com.unknownn.doctorpatient.others.Patient;
 import com.unknownn.doctorpatient.others.SharedPref;
 
 import java.util.ArrayList;
@@ -49,7 +47,7 @@ import java.util.List;
 
 public class PatientHomePage extends AppCompatActivity {
 
-    private boolean forceExit = false, hasDoublePressed = false, hasClickedOne = false;
+    private boolean forceExit = false, hasDoublePressed = false;
     private SharedPref sp;
     private Dialog mainDialog;
     private TextView tvProgress;
@@ -133,84 +131,10 @@ public class PatientHomePage extends AppCompatActivity {
         return sp;
     }
 
-    private void handleRest(AvDoctor doctor){
-        if(doctor == null) {
-            hasClickedOne = false;
-            return;
-        }
-
-        if(doctor.isInCall()){
-            showSnackBar("Busy in another call");
-            hasClickedOne = false;
-            return;
-        }
-
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user == null){
-            showSnackBar(getString(R.string.you_are_not_signed_in));
-            hasClickedOne = false;
-            return;
-        }
-
-        if(doctor.isTimeInvalid()){
-            hasClickedOne = false;
-            showSnackBar(getString(R.string.not_available));
-            return;
-        }
-
-        final String uid = user.getUid();
-        showProgress(null,doctor.getUid(),uid);
-        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
-                .child("request").child(doctor.getUid()).child(uid);
-
-        final Patient mine = (Patient)getSp().getMyProfile();
-
-        ref.setValue(mine).addOnCompleteListener(task -> {
-            hasClickedOne = false;
-            if(!task.isSuccessful()){
-                dismissMainDialog();
-                showSnackBar(getString(R.string.something_went_wrong));
-            }
-            else{
-                changeProgressMessage("Waiting for accepting...");
-                addCallUpdateListener(doctor.getUid(),uid);
-            }
-        });
-    }
-
     @Override
     protected void onResumeFragments() {
         super.onResumeFragments();
     }
-
-    private void addCallUpdateListener(String docUid, String myUid){
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("request")
-                .child(docUid).child(myUid);
-
-        ValueEventListener listener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
-                    String val = String.valueOf(snapshot.child("status").getValue());
-                    if(val.equalsIgnoreCase("accepted")){//accepted
-                        acceptOrRejectStatus(ref,this,true,docUid);
-                    }
-                }
-                else{ // rejected
-                    acceptOrRejectStatus(ref,this,false,docUid);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        };
-
-        ref.addValueEventListener(listener);
-    }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {

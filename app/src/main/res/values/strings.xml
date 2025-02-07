@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DoctorPatient</string>
+    <string name="app_name">Health Connect</string>
     <string name="join">Join</string>
     <string name="leave">Leave</string>
     <string name="enter_call_id">Enter call id</string>
@@ -87,4 +87,5 @@
     <string name="upcoming_appointment">Upcoming appointment</string>
     <string name="no_chats_found">No chats found</string>
     <string name="chat">Chat</string>
+    <string name="processing_your_request">Processing your request...</string>
 </resources>
