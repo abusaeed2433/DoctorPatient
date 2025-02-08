@@ -32,6 +32,7 @@ import com.unknownn.doctorpatient.others.Patient;
 import com.unknownn.doctorpatient.others.SharedPref;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -59,25 +60,39 @@ public class BookAppointmentActivity extends AppCompatActivity {
     }
 
     private void startAdapter(){
+        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy_hh:mma");
 
-        final LinearLayoutManager dateLayoutManager = (LinearLayoutManager) binding.rvDate.getLayoutManager();
-        final LinearLayoutManager timeLayoutManager = (LinearLayoutManager) binding.rvTime.getLayoutManager();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mma");
 
-        dateAdapter = new BookAdapter();
-        timeAdapter = new BookAdapter();
+        dateAdapter = new BookAdapter(item -> dateAdapter.highlightItem(item.getIndex()));
+        timeAdapter = new BookAdapter(item -> {
+            String date = dateAdapter.getHighlightedItem().getDateOrTime();
+            String time = item.getDateOrTime();
+
+            String dateTime = date+"_"+time;
+
+            LocalDateTime localTime = LocalDateTime.from(dateTimeFormatter.parse(dateTime));
+            if(localTime.isBefore(LocalDateTime.now())){
+                showAlertDialog("Sorry", "You can't book appointment before current time.");
+            }
+            else{
+                timeAdapter.highlightItem(item.getIndex());
+            }
+        });
 
         binding.rvDate.setAdapter(dateAdapter);
         binding.rvTime.setAdapter(timeAdapter);
 
-        // Date adapter items. From curDate - 2 to curDate+15+1+2
-        LocalDate localDate = LocalDate.now().minusDays(2);
-        DateTimeFormatter formatterBase = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        // Date adapter items. From curDate to next 15 days
+        LocalDate localDate = LocalDate.now();
+
         DateTimeFormatter formatterUser = DateTimeFormatter.ofPattern("dd\nE");
 
         final List<SpanItem> dateList = new ArrayList<>();
-        for(int i=0; i<20; i++){
+        for(int i=0; i<15; i++){
             LocalDate ld = localDate.plusDays(i);
-            String base = formatterBase.format(ld);
+            String base = dateFormatter.format(ld);
             String dateDayName = formatterUser.format(ld);
 
             SpannableString spannable = new SpannableString(dateDayName);
@@ -91,16 +106,16 @@ public class BookAppointmentActivity extends AppCompatActivity {
 
         // time adapter items. From 8:00AM to 11:30PM.
         final List<SpanItem> timeList = new ArrayList<>();
-        LocalTime startTime = LocalTime.of(8,0);
+        LocalTime startTime = LocalTime.of(0,0);
         LocalTime lastTime = LocalTime.of(23,30);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mma");
+
         int index = 0;
-        while (startTime.isBefore(lastTime)){
+        while (lastTime.isAfter(startTime)){
             LocalTime endTime = startTime.plusMinutes(30);
 
-            String start = formatter.format(startTime);
-            String end = formatter.format(endTime);
+            String start = timeFormatter.format(startTime);
+            String end = timeFormatter.format(endTime);
 
             timeList.add( new SpanItem( index, new SpannableString(start+"\n"+end), start, (index == 2) ) );
             startTime = endTime;
@@ -128,10 +143,12 @@ public class BookAppointmentActivity extends AppCompatActivity {
                 dateItem.getDateOrTime(),
                 timeItem.getDateOrTime(),
                 doctor.getUid(),
+                doctor.getIntId(),
                 doctor.getName(),
                 doctor.getSpecialities(),
                 doctor.getImageUrl(),
                 patient.getUid(),
+                patient.getIntId(),
                 patient.getName(),
                 patient.getDesc(),
                 patient.getImageUrl(),

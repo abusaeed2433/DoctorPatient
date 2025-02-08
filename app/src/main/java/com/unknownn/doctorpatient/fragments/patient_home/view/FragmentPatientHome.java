@@ -34,6 +34,7 @@ import com.unknownn.doctorpatient.others.Doctor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -170,7 +171,7 @@ public class FragmentPatientHome extends Fragment {
         final List<Doctor> tempList = new ArrayList<>();
         mainLoop:
         for(Doctor doctor : doctors){
-            if(!doctor.getName().contains(searchKey)) continue;
+            if(!doctor.getName().toLowerCase(Locale.US).contains(searchKey)) continue;
 
             final List<Speciality> docSpecialities = doctor.getAllSpecialities();
             for(Speciality sp : docSpecialities){

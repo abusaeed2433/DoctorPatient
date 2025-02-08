@@ -27,10 +27,15 @@ import com.unknownn.doctorpatient.databinding.ActivityAppointmentDetailsBinding;
 import com.unknownn.doctorpatient.homepage_doctor.model.Appointment;
 import com.unknownn.doctorpatient.homepage_doctor.view.DoctorHomePage;
 import com.unknownn.doctorpatient.others.Doctor;
+import com.unknownn.doctorpatient.others.MyPopUp;
 import com.unknownn.doctorpatient.others.Patient;
 import com.unknownn.doctorpatient.others.SharedPref;
 import com.unknownn.doctorpatient.others.User;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -234,21 +239,48 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
                 .show();
     }
 
+    private void showAlertDialog(String title, String message) {
+        MyPopUp myPopUp = new MyPopUp(this, title, message);
+        myPopUp.setCancelable(false);
+        myPopUp.setClickListener("Dismiss",null);
+        myPopUp.show();
+    }
+
     private void joinCall(Appointment appointment){
+
+        final String dateTime = appointment.getDateTime().toUpperCase();
+        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy_hh:mma", Locale.US);
+
+        final LocalDateTime appointmentDateTime = LocalDateTime.from(dateTimeFormatter.parse(dateTime));
+
+        final LocalDateTime curDateTime = LocalDateTime.now();
+
+        if( curDateTime.isBefore( appointmentDateTime.minusMinutes(10) )){
+            showAlertDialog("Appointment not started", "This appointment is not started yet. You can't join now.");
+            return;
+        }
+        if( curDateTime.isAfter( appointmentDateTime.plusMinutes(40) ) ) {
+            showAlertDialog("Appointment time is over", "This appointment is over. You can't join now anymore.");
+            return;
+        }
+
+        final boolean amIDoctor = new SharedPref(this).getMyProfile().isAmIDoctor();
+
         showProgress();
-        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("token/0");
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("token").child(appointment.getAppointmentId());
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 dismissMainDialog();
-                String appId = String.valueOf(snapshot.child("appId").getValue());
-                String token = String.valueOf(snapshot.child("token").getValue());
-                String cName = String.valueOf(snapshot.child("cName").getValue());
+                final String appId = String.valueOf(snapshot.child("appId").getValue());
+                final String cName = String.valueOf(snapshot.child("channelName").getValue());
+                final String doctorToken = String.valueOf(snapshot.child("doctorToken").getValue());
+                final String patientToken = String.valueOf(snapshot.child("patientToken").getValue());
 
                 Intent intent = new Intent(AppointmentDetailsActivity.this, VideoActivity.class);
                 intent.putExtra("doctor_uid", appointment.getDoctorUid());
                 intent.putExtra("patient_uid", appointment.getPatientUid());
-                intent.putExtra("token", token);
+                intent.putExtra("token", (amIDoctor ? doctorToken : patientToken));
                 intent.putExtra("channel_name", cName);
                 intent.putExtra("app_id", appId);
                 startActivity(intent);

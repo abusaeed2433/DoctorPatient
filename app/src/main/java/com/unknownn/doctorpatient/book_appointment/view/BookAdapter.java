@@ -16,9 +16,11 @@ import com.unknownn.doctorpatient.others.ItemClickListener;
 public class BookAdapter extends ListAdapter<SpanItem, BookAdapter.ViewHolder> {
 
     private int highlightedIndex = -1;
+    private final ItemClickListener<SpanItem> clickListener;
 
-    protected BookAdapter() {
+    protected BookAdapter(ItemClickListener<SpanItem> clickListener) {
         super(diffCallback);
+        this.clickListener = clickListener;
     }
 
     private static final DiffUtil.ItemCallback<SpanItem> diffCallback = new DiffUtil.ItemCallback<SpanItem>() {
@@ -48,7 +50,7 @@ public class BookAdapter extends ListAdapter<SpanItem, BookAdapter.ViewHolder> {
                 position == highlightedIndex ? R.drawable.selected_speciality : R.drawable.shadow_up_back
         );
 
-        holder.binding.clHolder.setOnClickListener(v-> highlightItem(holder.getAdapterPosition()));
+        holder.binding.clHolder.setOnClickListener(v-> this.clickListener.onItemClick(getItem(holder.getAdapterPosition())));
 
     }
 
