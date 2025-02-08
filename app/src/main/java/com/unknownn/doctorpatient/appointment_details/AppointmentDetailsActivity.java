@@ -271,6 +271,11 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(!snapshot.exists()){
+                    finish();
+                    return;
+                }
+
                 dismissMainDialog();
                 final String appId = String.valueOf(snapshot.child("appId").getValue());
                 final String cName = String.valueOf(snapshot.child("channelName").getValue());

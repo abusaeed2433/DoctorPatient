@@ -77,7 +77,7 @@ public class Doctor extends User implements Serializable {
         for(Speciality sp : list){
             builder.append(sp.category).append(" | ");
         }
-        if(builder.length() <= 0 ) return null;
+        if(builder.length() <= 0 ) return "";
 
         return builder.delete(builder.length()-3, builder.length()).toString();
     }

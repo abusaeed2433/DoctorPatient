@@ -145,7 +145,7 @@ public class BookAppointmentActivity extends AppCompatActivity {
                 doctor.getUid(),
                 doctor.getIntId(),
                 doctor.getName(),
-                doctor.getSpecialities(),
+                doctor.getSpecialityMessage(),
                 doctor.getImageUrl(),
                 patient.getUid(),
                 patient.getIntId(),
