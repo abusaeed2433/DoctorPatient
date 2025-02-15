@@ -1,5 +1,7 @@
 package com.unknownn.doctorpatient.homepage_doctor.model;
 
+import android.util.Log;
+
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.PropertyName;
 import com.unknownn.doctorpatient.R;
@@ -232,7 +234,9 @@ public class Appointment implements Comparable<Appointment>, Serializable {
                 timestamp = ldt.toEpochSecond(ZoneOffset.UTC);
             }
 
-        }catch (Exception ignored){}
+        }catch (Exception e){
+            Log.d("Failed at conversion", "getDayDD: "+e.getMessage());
+        }
         return dateDD;
     }
 

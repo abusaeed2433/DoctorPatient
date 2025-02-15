@@ -38,6 +38,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class BookAppointmentActivity extends AppCompatActivity {
 
@@ -60,10 +61,10 @@ public class BookAppointmentActivity extends AppCompatActivity {
     }
 
     private void startAdapter(){
-        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy_hh:mma");
+        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy_hh:mma", Locale.US);
 
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mma");
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.US);
+        final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mma", Locale.US);
 
         dateAdapter = new BookAdapter(item -> dateAdapter.highlightItem(item.getIndex()));
         timeAdapter = new BookAdapter(item -> {
@@ -87,7 +88,7 @@ public class BookAppointmentActivity extends AppCompatActivity {
         // Date adapter items. From curDate to next 15 days
         LocalDate localDate = LocalDate.now();
 
-        DateTimeFormatter formatterUser = DateTimeFormatter.ofPattern("dd\nE");
+        DateTimeFormatter formatterUser = DateTimeFormatter.ofPattern("dd\nE", Locale.US);
 
         final List<SpanItem> dateList = new ArrayList<>();
         for(int i=0; i<15; i++){

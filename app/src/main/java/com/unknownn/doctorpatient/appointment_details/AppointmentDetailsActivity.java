@@ -20,6 +20,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.unknownn.doctorpatient.R;
 import com.unknownn.doctorpatient.VideoActivity;
@@ -83,7 +84,6 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
                 appointment.setConfirmed(isAccepted);
                 if(isAccepted){
                     binding.tvOnlineLeft.setText(getString(R.string.ph_string_only, "Doctor is currently"));
-                    binding.tvAvailableStatus.setText(getString(R.string.offline));
                 }
                 else{
                     binding.tvOnlineLeft.setText(getString(R.string.ph_string_only, "Your appointment is still"));
@@ -146,9 +146,15 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
                     binding.tvOnlineLeft.setText(getString(R.string.ph_string_only, "Doctor is currently"));
                     boolean isActive = (curTime - lastTimeFromDatabase) < DoctorHomePage.UPDATE_TIME_INTERVAL;
 
-                    binding.tvAvailableStatus.setText(
-                            isActive ? getString(R.string.online) : getString(R.string.offline)
-                    );
+                    if(lastTimeFromDatabase == 0){
+                        binding.tvAvailableStatus.setText(getString(R.string.dots));
+                    }
+                    else {
+                        binding.tvAvailableStatus.setText(
+                                isActive ? getString(R.string.online) : getString(R.string.offline)
+                        );
+                    }
+
                     binding.tvAvailableStatus.setTextColor(
                             getResources().getColor(
                                     isActive ? R.color.blue : R.color.red,
@@ -161,7 +167,7 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
             }
         };
 
-        timer.schedule(timerTask, 0, DoctorHomePage.UPDATE_TIME_INTERVAL);
+        timer.schedule(timerTask, 0, DoctorHomePage.UPDATE_TIME_INTERVAL/4);
     }
 
     private void downloadProfile(Appointment appointment, boolean amIDoctor){
@@ -248,7 +254,7 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
 
     private void joinCall(Appointment appointment){
 
-        final String dateTime = appointment.getDateTime().toUpperCase();
+        final String dateTime = appointment.getDateTime();
         final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy_hh:mma", Locale.US);
 
         final LocalDateTime appointmentDateTime = LocalDateTime.from(dateTimeFormatter.parse(dateTime));

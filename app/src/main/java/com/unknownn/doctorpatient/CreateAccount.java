@@ -199,7 +199,9 @@ public class CreateAccount extends AppCompatActivity {
     }
 
     private void openAddInfoPage(boolean amIDoctor){
-        final Intent intent = new Intent(this, (amIDoctor ? DoctorProfile.class : PatientProfile.class));
+        final Intent intent = new Intent(this,
+                (amIDoctor ? DoctorProfile.class : PatientProfile.class)
+        );
         intent.putExtra("from_login_page",true);
         startActivity(intent);
     }

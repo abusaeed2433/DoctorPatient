@@ -43,7 +43,7 @@
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Md Abu Saeed" />
+            tools:text="John Smith" />
 
         <TextView
             android:id="@+id/tvDoctorExperience"

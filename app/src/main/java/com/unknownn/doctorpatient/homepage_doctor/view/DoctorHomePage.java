@@ -42,6 +42,7 @@ import com.unknownn.doctorpatient.others.SharedPref;
 import com.unknownn.doctorpatient.others.User;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class DoctorHomePage extends AppCompatActivity {
 
-    public static final int UPDATE_TIME_INTERVAL = 10000;
+    public static final int UPDATE_TIME_INTERVAL = 8000;
     public static final int UPDATE_TIME_INTERVAL_MAX = 12000;
 
     private boolean forceExit = false, hasDoublePressed = false;
@@ -148,20 +149,14 @@ public class DoctorHomePage extends AppCompatActivity {
             binding.tvMessage.setVisibility(View.INVISIBLE);
         }
 
+        list.sort(Comparator.comparingLong(Appointment::getTimestamp));
+
         appointmentAdapter.submitList(list);
     }
 
     private void exitUser(){
         if(runnable != null){
             mHandler.removeCallbacks(runnable);
-        }
-
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            String uid = user.getUid();
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
-                    .child("available/doctor").child(uid).child("lastOnline");
-            ref.setValue(0);
         }
         finishAffinity();
     }
@@ -296,6 +291,7 @@ public class DoctorHomePage extends AppCompatActivity {
             else{
                 Map<String,Object> map = mine.getMap();
                 map.put("lastOnline", ServerValue.TIMESTAMP);
+                map.put("lastOnlineTime",ServerValue.TIMESTAMP);
                 map.put("inCall", false);
 
                 final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("available/doctor").child(uid);
